@@ -1,0 +1,42 @@
+/* Halo Opaline reminder: administrative surfaces use layered dark glass; cyan creates, coral confirms destructive actions, and no native toolkit should dominate the composition. */
+.activation-admin-panel { position: relative; }
+.admin-toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.admin-toolbar .search-field { flex: 1 1 280px; }
+.admin-add-button { margin-left: auto; }
+.admin-permission-note { display: flex; align-items: center; gap: 8px; margin: 18px 0 14px; color: rgba(215, 241, 247, .74); font-size: 12px; }
+.admin-permission-note svg { color: #88e6df; }
+.admin-activation-table { overflow: hidden; border: 1px solid rgba(179, 220, 255, .14); border-radius: 16px; background: rgba(4, 15, 31, .34); }
+.admin-activation-head, .admin-activation-main { display: grid; grid-template-columns: 96px minmax(150px, 1.2fr) minmax(150px, 1.1fr) minmax(170px, 1.2fr) minmax(120px, .9fr) 110px; gap: 12px; align-items: center; }
+.admin-activation-head { padding: 11px 16px; color: rgba(208, 231, 246, .5); font-size: 10px; letter-spacing: .12em; text-transform: uppercase; border-bottom: 1px solid rgba(179, 220, 255, .12); }
+.admin-activation-row { display: grid; grid-template-columns: minmax(0, 1fr) 44px; align-items: stretch; border-bottom: 1px solid rgba(179, 220, 255, .09); }
+.admin-activation-row:last-child { border-bottom: 0; }
+.admin-activation-main { width: 100%; padding: 14px 16px; border: 0; color: inherit; background: transparent; text-align: left; font: inherit; transition: background .18s ease; }
+.admin-activation-main:hover { background: rgba(129, 232, 224, .06); }
+.admin-activation-main > span, .admin-activation-main > strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.admin-activation-main > span:first-child { color: rgba(216, 237, 245, .7); font-size: 12px; }
+.admin-activation-main > strong { color: #f5fbff; font-size: 13px; }
+.admin-activation-main > span:not(:first-child) { color: rgba(216, 237, 245, .72); font-size: 12px; }
+.admin-delete-button { display: grid; place-items: center; align-self: center; justify-self: center; width: 30px; height: 30px; border: 1px solid rgba(255, 145, 151, .22); border-radius: 10px; color: rgba(255, 160, 165, .72); background: rgba(255, 104, 115, .08); transition: background .18s ease, color .18s ease, transform .18s ease; }
+.admin-delete-button:hover { color: #fff; background: rgba(255, 104, 115, .22); transform: translateY(-1px); }
+.admin-feedback { display: flex; align-items: center; gap: 8px; margin-top: 14px; color: #8de8df; font-size: 12px; }
+.admin-modal-backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px; background: rgba(2, 8, 20, .72); backdrop-filter: blur(14px); }
+.admin-modal { width: min(720px, 100%); padding: 24px; border: 1px solid rgba(170, 224, 255, .24); box-shadow: 0 26px 90px rgba(0, 0, 0, .48), inset 0 1px 0 rgba(255,255,255,.12); }
+.admin-modal-heading { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; }
+.admin-modal-heading h2 { margin: 8px 0 4px; color: #f5fbff; font-size: clamp(22px, 3vw, 30px); }
+.admin-modal-heading p { margin: 0; color: rgba(215, 235, 245, .66); font-size: 13px; }
+.admin-form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 24px; }
+.admin-field { display: grid; gap: 7px; position: relative; }
+.admin-field > span { color: rgba(214, 237, 246, .62); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+.admin-field input, .admin-choice-trigger { width: 100%; min-height: 42px; padding: 0 13px; border: 1px solid rgba(165, 214, 242, .18); border-radius: 12px; outline: 0; color: #eefaff; background: rgba(4, 17, 34, .7); box-shadow: inset 0 1px 0 rgba(255,255,255,.035); transition: border-color .18s ease, box-shadow .18s ease; }
+.admin-field input:focus, .admin-choice-trigger:focus { border-color: rgba(118, 233, 229, .76); box-shadow: 0 0 0 3px rgba(118, 233, 229, .1); }
+.admin-choice { z-index: 2; }
+.admin-choice-trigger { display: flex; justify-content: space-between; align-items: center; text-align: left; }
+.admin-choice-chevron { color: #83e4de; transition: transform .18s ease; }
+.admin-choice-chevron.is-open { transform: rotate(180deg); }
+.admin-choice-menu { position: absolute; inset: calc(100% + 7px) 0 auto; padding: 6px; border: 1px solid rgba(164, 222, 245, .24); border-radius: 12px; background: rgba(8, 24, 47, .98); box-shadow: 0 18px 40px rgba(0,0,0,.32); }
+.admin-choice-menu button { display: block; width: 100%; padding: 10px 11px; border: 0; border-radius: 8px; color: rgba(226, 245, 252, .76); background: transparent; text-align: left; }
+.admin-choice-menu button:hover, .admin-choice-menu button.is-selected { color: #fff; background: rgba(125, 231, 223, .12); }
+.admin-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+.danger-button { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 15px; border: 1px solid rgba(255, 137, 145, .42); border-radius: 11px; color: #fff; background: linear-gradient(135deg, #e15e69, #a93452); box-shadow: 0 12px 24px rgba(202, 58, 87, .2); }
+.admin-danger-icon { display: grid; place-items: center; width: 42px; height: 42px; margin-bottom: 12px; border: 1px solid rgba(255, 145, 151, .25); border-radius: 14px; color: #ff9ea5; background: rgba(255, 99, 112, .1); }
+@media (max-width: 760px) { .admin-activation-head { display: none; } .admin-activation-main { grid-template-columns: 78px minmax(120px, 1fr) minmax(120px, 1fr); gap: 8px; padding: 13px 12px; } .admin-activation-main > span:nth-child(4), .admin-activation-main > span:nth-child(5), .admin-activation-main > span:nth-child(6) { display: none; } .admin-form-grid { grid-template-columns: 1fr; } .admin-add-button { margin-left: 0; width: 100%; justify-content: center; } }
