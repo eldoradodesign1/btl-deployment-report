@@ -130,18 +130,36 @@
 
 ## Intégration Supabase leads et commentaires — sauvegarde préalable obligatoire
 
-- [ ] Commiter l’état actuel de l’application dans le dépôt GitHub avant toute modification.
-- [ ] Vérifier que le commit de sauvegarde contient uniquement l’état actuel et qu’il est accessible sur GitHub.
-- [ ] Créer uniquement les deux tables de commentaires superviseur sans modifier les tables existantes.
-- [ ] Intégrer la lecture de `public.leads` avec fallback local CSV/XLSX.
-- [ ] Afficher les commentaires quotidiens dans les tooltips des courbes/histogrammes par date.
-- [ ] Afficher le commentaire hebdomadaire sous le double range slider pour les semaines sélectionnées.
-- [ ] Conserver le menu Notifications en overlay sans modifier le layout.
-- [ ] Tester fallback, permissions, commentaires et régressions avant livraison.
+- [x] Commiter l’état actuel de l’application dans le dépôt GitHub avant toute modification.
+- [x] Vérifier que le commit de sauvegarde contient uniquement l’état actuel et qu’il est accessible sur GitHub.
+- [x] Créer uniquement les deux tables de commentaires superviseur sans modifier les tables existantes.
+- [x] Intégrer la lecture de `public.leads` avec fallback local CSV/XLSX.
+- [x] Afficher les commentaires quotidiens dans les tooltips des courbes/histogrammes par date.
+- [x] Afficher le commentaire hebdomadaire sous le double range slider pour les semaines sélectionnées.
+- [x] Conserver le menu Notifications en overlay sans modifier le layout.
+- [x] Tester fallback, permissions, commentaires et régressions avant livraison.
+
+## Import du classeur de commentaires superviseur
+
+- [x] Vérifier que le commit de sauvegarde est visible dans le dépôt GitHub et le pousser si nécessaire.
+- [x] Lire le classeur `Commentaires_superviseur_activations_v3(1).xlsx` sans modifier son original.
+- [x] Identifier les feuilles, colonnes quotidiennes et hebdomadaires et les valeurs réellement renseignées.
+- [x] Normaliser les dates, semaines, métriques numériques et textes vers le schéma Supabase créé.
+- [x] Valider les contraintes d’unicité et les lignes rejetées avant écriture.
+- [x] Insérer uniquement les commentaires dans les deux tables superviseur.
+- [x] Vérifier l’affichage des commentaires dans les tooltips et sous le double range slider.
+
+## Push de l’état actuel puis tooltips en attente de validation
+
+- [ ] Commiter et pousser l’état actuel avec l’intégration leads/commentaires avant toute tooltip modification.
+- [ ] Rendre les tooltips quotidiens plus larges, translucides et limités à un extrait lisible.
+- [ ] Ouvrir une modale complète au clic sur une date de la courbe de progression.
+- [ ] Ouvrir la même modale complète au clic sur une barre/date de l’histogramme.
+- [ ] Vérifier que le commit tooltip reste local et n’est pas poussé avant validation utilisateur.
 
 ## Préparation des assets sans File Storage
 
-- [ ] Auditer les assets volumineux et les références locales nécessaires au projet.
-- [ ] Générer les fichiers locaux de packaging/documentation sans supprimer les assets existants.
-- [ ] Ne pas convertir le projet en full-stack et ne pas modifier Supabase à cette étape.
-- [ ] Vérifier le build et préparer une nouvelle tentative de sauvegarde après résolution des assets.
+- [x] Auditer les assets volumineux et les références locales nécessaires au projet.
+- [x] Générer les fichiers locaux de packaging/documentation sans supprimer les assets existants.
+- [x] Ne pas convertir le projet en full-stack et ne pas modifier Supabase à cette étape.
+- [x] Vérifier le build et préparer une nouvelle tentative de sauvegarde après résolution des assets.
