@@ -47,11 +47,17 @@ export default function Home() {
   const dates = useMemo(() => dateList(data), [data]); const weekRanges = useMemo(() => getWeekRanges(data), [data]);
   const [startDate, setStartDate] = useState(() => dates[0] ?? "2026-07-23");
   const [endDate, setEndDate] = useState(() => dates.at(-1) ?? "2026-08-08");
-  const [page, setPage] = useState("dashboard"); const [pageChanging, setPageChanging] = useState(false); const [sidebarOpen, setSidebarOpen] = useState(false); const [notificationsOpen, setNotificationsOpen] = useState(false); const [notificationsRead, setNotificationsRead] = useState(false); const [reportOpen, setReportOpen] = useState(false); const [accountOpen, setAccountOpen] = useState(false); const [accountPasswordOpen, setAccountPasswordOpen] = useState(false); const [accountPassword, setAccountPassword] = useState(""); const [accountPasswordError, setAccountPasswordError] = useState(""); const [helpOpen, setHelpOpen] = useState(false); const [helpGuideOpen, setHelpGuideOpen] = useState(false); const [periodDocked, setPeriodDocked] = useState(false);
+  const [page, setPage] = useState("dashboard"); const [pageChanging, setPageChanging] = useState(false); const [sidebarOpen, setSidebarOpen] = useState(false); const [notificationsOpen, setNotificationsOpen] = useState(false); const [notificationsRead, setNotificationsRead] = useState(false); const [reportOpen, setReportOpen] = useState(false); const [accountOpen, setAccountOpen] = useState(false); const [accountPasswordOpen, setAccountPasswordOpen] = useState(false); const [accountPassword, setAccountPassword] = useState(""); const [accountPasswordError, setAccountPasswordError] = useState(""); const [helpOpen, setHelpOpen] = useState(false); const [helpGuideOpen, setHelpGuideOpen] = useState(false); const [periodDocked, setPeriodDocked] = useState(false); const [isMobileViewport, setIsMobileViewport] = useState(() => typeof window !== "undefined" && window.innerWidth <= 760);
   const notificationRef = useRef<HTMLDivElement | null>(null);
   const accountRef = useRef<HTMLDivElement | null>(null);
   const helpRef = useRef<HTMLDivElement | null>(null);
   const mainStageRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const syncViewport = () => setIsMobileViewport(window.innerWidth <= 760);
+    syncViewport();
+    window.addEventListener("resize", syncViewport);
+    return () => window.removeEventListener("resize", syncViewport);
+  }, []);
   useEffect(() => {
     if (!notificationsOpen) return;
     const closeOnOutsidePointer = (event: PointerEvent) => {
@@ -138,7 +144,7 @@ export default function Home() {
   const onImport = (records: Activation[], nextIssues: QualityIssue[]) => { setData(records); setDailyComments({}); setWeeklyComments({}); setIssues(nextIssues); saveLocalData(records); localStorage.setItem("vodacom-issues", JSON.stringify(nextIssues)); const nextDates = dateList(records); setStartDate(nextDates[0] ?? startDate); setEndDate(nextDates.at(-1) ?? endDate); setPage("dashboard"); };
   const onAdminAuthenticate = (phone: string, password: string): Promise<SupabaseAdminProfile> => authenticateSupabaseAdmin(phone, password);
   const onSupabaseSync = async (config: SupabaseConfig) => { const snapshot = await loadSupabaseSnapshot(createSupabaseClient(config)); setData(snapshot.records); setDailyComments(snapshot.dailyComments); setWeeklyComments(snapshot.weeklyComments); saveLocalData(snapshot.records); saveSupabaseConfig(config); setSupabaseConfig(config); const nextDates = dateList(snapshot.records); setStartDate(nextDates[0] ?? "2026-07-23"); setEndDate(nextDates.at(-1) ?? "2026-08-08"); };
-  const showTopbarPeriod = data.length > 0 && (page !== "dashboard" || periodDocked);
+  const showTopbarPeriod = data.length > 0 && (isMobileViewport || page !== "dashboard" || periodDocked);
   const onSettings = (next: AppSettings) => { setSettings(next); localStorage.setItem("vodacom-settings", JSON.stringify(next)); };
   const onEditRecord = (index: number, field: "a" | "s" | "cl" | "n", value: string) => { setData((current) => { const next = current.map((item, itemIndex) => itemIndex === index ? { ...item, [field]: value } : item); saveLocalData(next); return next; }); };
   if (!session) return <LocalLogin onLogin={onLogin} />;

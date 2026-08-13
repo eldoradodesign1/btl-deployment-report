@@ -1,6 +1,6 @@
 // Design philosophy: Halo Opaline — the period control is the luminous, tangible center of the dashboard.
 import { CalendarDays, ChevronRight, SlidersHorizontal } from "lucide-react";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Activation } from "@/data/vodacomData";
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -32,6 +32,17 @@ type Props = { data: Activation[]; startDate: string; endDate: string; weeklyCom
 export default function DateRangeFilter({ data, startDate, endDate, weeklyComment, onChange, compact = false }: Props) {
   const dates = useMemo(() => Array.from(new Set(data.map((item) => item.d))).sort(), [data]);
   const weeks = useMemo(() => getWeekRanges(data), [data]);
+  const [compactOpen, setCompactOpen] = useState(false);
+  const compactRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!compact || !compactOpen) return;
+    const closeOnOutsidePointer = (event: PointerEvent) => {
+      const target = event.target as Node;
+      if (compactRef.current && !compactRef.current.contains(target)) setCompactOpen(false);
+    };
+    document.addEventListener("pointerdown", closeOnOutsidePointer);
+    return () => document.removeEventListener("pointerdown", closeOnOutsidePointer);
+  }, [compact, compactOpen]);
   if (!dates.length) return <section className="period-card glass-card empty-period-card" aria-label="Filtre de période"><div className="period-heading"><div className="eyebrow"><CalendarDays size={14} /> Fenêtre d’analyse</div><div className="period-heading-copy"><h2>Aucune période chargée</h2><p>Importez un fichier CSV, XLSX ou XLS depuis « Import & sources » pour activer les filtres et les graphiques.</p></div><div className="period-empty-status"><span className="live-pulse" /> En attente d’import</div></div><div className="empty-period-body"><div className="empty-period-orbit"><SlidersHorizontal size={20} /></div><div><strong>Le cockpit est prêt pour vos données.</strong><span>Les dates, semaines, KPI, analyses et exports apparaîtront automatiquement après import.</span></div></div></section>;
   const minDate = dates[0];
   const maxDate = dates.at(-1)!;
@@ -47,7 +58,7 @@ export default function DateRangeFilter({ data, startDate, endDate, weeklyCommen
     else onChange(startDate, isoDate(new Date(min.getTime() + Math.max(offset, startOffset) * DAY)));
   };
 
-  if (compact) return <div className="compact-period-slider" aria-label="Filtre de période compact"><div className="compact-period-label"><SlidersHorizontal size={13} /><span><small>PÉRIODE</small><strong>{shortDate(toDate(startDate))} → {shortDate(toDate(endDate))}</strong></span></div><div className="dual-range compact-dual-range" style={{ "--range-start": startPercent, "--range-end": endPercent } as React.CSSProperties}><div className="range-track"><div className="range-fill" /></div><div className="range-handle-tooltip range-start-tooltip" style={{ left: startPercent }}><span>Début</span><strong>{shortDate(toDate(startDate))}</strong></div><div className="range-handle-tooltip range-end-tooltip" style={{ left: endPercent }}><span>Fin</span><strong>{shortDate(toDate(endDate))}</strong></div><input type="range" min={0} max={maxOffset} value={startOffset} onChange={(event) => selectOffset(Number(event.target.value), "start")} aria-label="Date de début" /><input type="range" min={0} max={maxOffset} value={endOffset} onChange={(event) => selectOffset(Number(event.target.value), "end")} aria-label="Date de fin" /></div></div>;
+  if (compact) return <div ref={compactRef} className={`compact-period-slider ${compactOpen ? "is-open" : ""}`} aria-label="Filtre de période compact"><button type="button" className="compact-period-pill" onClick={() => setCompactOpen((value) => !value)} aria-expanded={compactOpen}><SlidersHorizontal size={13} /><span><small>PÉRIODE</small><strong>{shortDate(toDate(startDate))} → {shortDate(toDate(endDate))}</strong></span><ChevronRight className={`compact-period-pill-chevron ${compactOpen ? "is-open" : ""}`} size={13} /></button>{compactOpen && <div className="compact-period-dropdown"><div className="compact-period-dropdown-heading"><span>Affiner au jour près</span><strong>{shortDate(toDate(startDate))} → {shortDate(toDate(endDate))}</strong></div><div className="dual-range compact-dual-range" style={{ "--range-start": startPercent, "--range-end": endPercent } as React.CSSProperties}><div className="range-track"><div className="range-fill" /></div><div className="range-handle-tooltip range-start-tooltip" style={{ left: startPercent }}><span>Début</span><strong>{shortDate(toDate(startDate))}</strong></div><div className="range-handle-tooltip range-end-tooltip" style={{ left: endPercent }}><span>Fin</span><strong>{shortDate(toDate(endDate))}</strong></div><input type="range" min={0} max={maxOffset} value={startOffset} onChange={(event) => selectOffset(Number(event.target.value), "start")} aria-label="Date de début" /><input type="range" min={0} max={maxOffset} value={endOffset} onChange={(event) => selectOffset(Number(event.target.value), "end")} aria-label="Date de fin" /></div></div>}</div>;
 
   return <section className="period-card glass-card" aria-label="Filtre de période">
     <div className="period-heading"><div className="eyebrow"><CalendarDays size={14} /> Fenêtre d’analyse</div><div className="period-heading-copy"><h2>Quelle période souhaitez-vous lire ?</h2><p>{dates.length} jours d’activité détectés dans la campagne importée.</p></div><div className="period-current"><span>Lecture actuelle</span><strong>{fullDate(startDate)} <ChevronRight size={15} /> {fullDate(endDate)}</strong></div></div>

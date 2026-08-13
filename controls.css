@@ -416,3 +416,39 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
   .module-page { padding-bottom: 22px; }
   .help-panel, .notification-panel, .account-menu { max-width: calc(100vw - 24px); }
 }
+
+/* Mobile refinement: show the app identity, collapse the period to a pill, and keep the five dock actions focused on the mobile workflow. */
+@media (max-width: 760px) {
+  .topbar { gap: 6px; padding-left: 10px !important; padding-right: 10px !important; }
+  .topbar > .breadcrumb { position: relative; display: flex; flex: 0 0 108px; width: 108px; min-width: 108px; height: 34px; align-items: center; gap: 7px; overflow: visible; }
+  .topbar > .breadcrumb::before { content: ""; display: block; flex: 0 0 27px; width: 27px; height: 27px; border: 1px solid rgba(139,232,229,.32); border-radius: 9px; background: rgba(139,232,229,.1) url("/assets/vodacom-opaline-logo.png") center / 21px 21px no-repeat; box-shadow: 0 0 18px rgba(139,232,229,.12); }
+  .topbar > .breadcrumb::after { content: "BTL\A DEPLOYMENT REPORT"; display: block; color: #8be8e5; font: 700 7px/1.45 "Space Grotesk"; letter-spacing: .13em; white-space: pre; }
+  .topbar > .breadcrumb strong { display: none; }
+  .topbar > .compact-period-slider { flex: 1 1 auto; width: auto; min-width: 0; max-width: none; margin: 0 2px; padding: 0; }
+  .compact-period-slider { position: relative; display: block; min-width: 0; }
+  .compact-period-pill { width: 100%; min-height: 34px; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 7px; border: 1px solid rgba(139,232,229,.22); border-radius: 12px; color: #bfecea; background: rgba(139,232,229,.07); box-shadow: inset 0 1px 0 rgba(255,255,255,.07), 0 0 16px rgba(139,232,229,.05); }
+  .compact-period-pill:active { transform: scale(.97); }
+  .compact-period-pill > span { display: grid; min-width: 0; gap: 1px; text-align: left; }
+  .compact-period-pill small { display: block; overflow: hidden; color: #6d8296; font: 7px "Space Grotesk"; letter-spacing: .1em; text-overflow: ellipsis; text-transform: uppercase; white-space: nowrap; }
+  .compact-period-pill strong { display: block; overflow: hidden; color: #c7f7f4; font: 8px "Space Grotesk"; text-overflow: ellipsis; white-space: nowrap; }
+  .compact-period-pill-chevron { flex: 0 0 auto; color: #8be8e5; transition: transform .22s var(--ease-fluid); }
+  .compact-period-pill-chevron.is-open { transform: rotate(90deg); }
+  .compact-period-dropdown { position: fixed; z-index: 2300; top: calc(64px + env(safe-area-inset-top)); left: 10px; right: 10px; width: auto; padding: 15px 14px 16px; border: 1px solid rgba(139,232,229,.22); border-radius: 16px; background: rgba(11,22,39,.96); box-shadow: 0 22px 60px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter: blur(24px) saturate(145%); -webkit-backdrop-filter: blur(24px) saturate(145%); animation: halo-surface-in .26s var(--ease-spring) both; }
+  .compact-period-dropdown-heading { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 13px; color: #7d91a6; font: 8px "Space Grotesk"; letter-spacing: .1em; text-transform: uppercase; }
+  .compact-period-dropdown-heading strong { color: #c9f7f4; font: 9px "Space Grotesk"; letter-spacing: 0; text-transform: none; white-space: nowrap; }
+  .compact-period-dropdown .compact-dual-range { width: 100%; min-width: 0; margin: 0 !important; }
+  .compact-period-dropdown .range-handle-tooltip { top: -7px; }
+  .compact-period-dropdown .range-handle-tooltip strong { font-size: 8px; }
+  .help-wrap { display: none !important; }
+  .sidebar .nav-item { display: none !important; }
+  .sidebar .nav-group:nth-child(1) > .nav-item:nth-of-type(2),
+  .sidebar .nav-group:nth-child(2) > .nav-item:nth-of-type(2),
+  .sidebar .nav-group:nth-child(1) > .nav-item:nth-of-type(1),
+  .sidebar .nav-group:nth-child(3) > .nav-item:nth-of-type(2),
+  .sidebar .nav-group:nth-child(4) > .nav-item:nth-of-type(1) { display: grid !important; }
+  .sidebar .nav-group:nth-child(1) > .nav-item:nth-of-type(2) { order: 1; }
+  .sidebar .nav-group:nth-child(2) > .nav-item:nth-of-type(2) { order: 2; }
+  .sidebar .nav-group:nth-child(1) > .nav-item:nth-of-type(1) { order: 3; }
+  .sidebar .nav-group:nth-child(3) > .nav-item:nth-of-type(2) { order: 4; }
+  .sidebar .nav-group:nth-child(4) > .nav-item:nth-of-type(1) { order: 5; }
+}
