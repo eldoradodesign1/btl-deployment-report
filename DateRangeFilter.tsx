@@ -31,6 +31,7 @@ type Props = { data: Activation[]; startDate: string; endDate: string; weeklyCom
 
 export default function DateRangeFilter({ data, startDate, endDate, weeklyComment, onChange }: Props) {
   const dates = useMemo(() => Array.from(new Set(data.map((item) => item.d))).sort(), [data]);
+  const weeks = useMemo(() => getWeekRanges(data), [data]);
   if (!dates.length) return <section className="period-card glass-card empty-period-card" aria-label="Filtre de période"><div className="period-heading"><div className="eyebrow"><CalendarDays size={14} /> Fenêtre d’analyse</div><div className="period-heading-copy"><h2>Aucune période chargée</h2><p>Importez un fichier CSV, XLSX ou XLS depuis « Import & sources » pour activer les filtres et les graphiques.</p></div><div className="period-empty-status"><span className="live-pulse" /> En attente d’import</div></div><div className="empty-period-body"><div className="empty-period-orbit"><SlidersHorizontal size={20} /></div><div><strong>Le cockpit est prêt pour vos données.</strong><span>Les dates, semaines, KPI, analyses et exports apparaîtront automatiquement après import.</span></div></div></section>;
   const minDate = dates[0];
   const maxDate = dates.at(-1)!;
@@ -38,7 +39,6 @@ export default function DateRangeFilter({ data, startDate, endDate, weeklyCommen
   const maxOffset = Math.max(1, offsetBetween(min, toDate(maxDate)));
   const startOffset = offsetBetween(min, toDate(startDate));
   const endOffset = offsetBetween(min, toDate(endDate));
-  const weeks = useMemo(() => getWeekRanges(data), [data]);
   const allActive = startDate === minDate && endDate === maxDate;
   const startPercent = `${Math.min(100, Math.max(0, (startOffset / maxOffset) * 100))}%`;
   const endPercent = `${Math.min(100, Math.max(0, (endOffset / maxOffset) * 100))}%`;

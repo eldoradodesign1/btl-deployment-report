@@ -1,9 +1,10 @@
 // Design philosophy: Halo Opaline — the campaign curve is a luminous instrument with rounded points and readable daily signals.
 import { useId } from "react";
+import { commentExcerpt } from "./CommentDetailModal";
 
-type Props = { data: [string, number][]; startDate: string; endDate: string; formatDate: (value: string) => string; dailyComments?: Record<string, string>; readOnly?: boolean };
+type Props = { data: [string, number][]; startDate: string; endDate: string; formatDate: (value: string) => string; dailyComments?: Record<string, string>; onCommentOpen?: (date: string, value: number) => void; readOnly?: boolean };
 
-export default function ProgressionChart({ data, startDate, endDate, formatDate, dailyComments = {}, readOnly = false }: Props) {
+export default function ProgressionChart({ data, startDate, endDate, formatDate, dailyComments = {}, onCommentOpen, readOnly = false }: Props) {
   const clipId = useId().replace(/:/g, "");
   const width = 900; const height = 220; const padX = 34; const padTop = 22; const padBottom = 32;
   const max = Math.max(...data.map(([, value]) => value), 1);
@@ -26,7 +27,7 @@ export default function ProgressionChart({ data, startDate, endDate, formatDate,
         <circle cx={activeStart} cy={y(data[startIndex]?.[1] ?? 0)} r="4" className="progress-handle" /><circle cx={activeEnd} cy={y(data[endIndex < 0 ? data.length - 1 : endIndex]?.[1] ?? 0)} r="4" className="progress-handle" />
         {data.map(([date, value], index) => <g key={date}><text x={x(index)} y={height - 9} className="progress-label" textAnchor={index === 0 ? "start" : index === data.length - 1 ? "end" : "middle"}>{index === 0 || index === data.length - 1 || index === startIndex || index === endIndex ? formatDate(date) : ""}</text><text x={x(index)} y={y(value) - 10} className="progress-value" textAnchor="middle">{index === peakIndex ? value : ""}</text></g>)}
       </svg>
-      <div className="progression-tooltip-layer" aria-label="Détails quotidiens">{data.map(([date, value], index) => <span className="progression-hover-point" key={`tooltip-${date}`} style={{ left: `${(x(index) / width) * 100}%`, top: `${(y(value) / height) * 100}%` }}><span className="progression-tooltip"><b>{formatDate(date)}</b><em>{value} activations</em>{dailyComments[date] && <small>{dailyComments[date]}</small>}</span></span>)}</div>
+      <div className="progression-tooltip-layer" aria-label="Détails quotidiens">{data.map(([date, value], index) => { const hasComment = Boolean(dailyComments[date]); return <span className={`progression-hover-point ${index === 0 ? "tooltip-left" : index === data.length - 1 ? "tooltip-right" : ""}`} key={`tooltip-${date}`} style={{ left: `${(x(index) / width) * 100}%`, top: `${(y(value) / height) * 100}%` }} role={hasComment ? "button" : undefined} tabIndex={hasComment ? 0 : -1} aria-label={hasComment ? `Lire le commentaire du ${formatDate(date)}` : undefined} onClick={() => hasComment && onCommentOpen?.(date, value)} onKeyDown={(event) => { if (hasComment && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); onCommentOpen?.(date, value); } }}><span className="progression-tooltip"><b>{formatDate(date)}</b><em>{value} activations</em>{hasComment && <small>{commentExcerpt(dailyComments[date])}</small>}</span></span>; })}</div>
     </div>
     <div className="progression-footer"><span>{data.length} jours actifs sur la campagne source</span><strong>{formatDate(startDate)} → {formatDate(endDate)}</strong></div>
   </article>;

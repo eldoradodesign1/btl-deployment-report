@@ -138,7 +138,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
 .progression-tooltip-layer { position: absolute; inset: 0; pointer-events: none; }
 .progression-hover-point { position: absolute; z-index: 3; width: 18px; height: 18px; transform: translate(-50%, -50%); border: 1px solid transparent; border-radius: 50%; pointer-events: auto; }
 .progression-hover-point:hover { border-color: rgba(139,232,229,.55); background: rgba(139,232,229,.11); }
-.progression-tooltip { position: absolute; left: 50%; bottom: calc(100% + 5px); display: grid; gap: 3px; min-width: 86px; padding: 7px 8px; opacity: 0; transform: translate(-50%, 4px); border: 1px solid rgba(139,232,229,.35); border-radius: 9px; color: #d9f8f6; background: rgba(7,17,30,.96); box-shadow: 0 12px 30px rgba(0,0,0,.35); transition: opacity .16s var(--ease-out), transform .16s var(--ease-out); pointer-events: none; }
+.progression-tooltip { position: absolute; left: 50%; bottom: calc(100% + 5px); display: grid; gap: 4px; width: min(300px, calc(100vw - 32px)); padding: 9px 11px; opacity: 0; transform: translate(-50%, 4px); border: 1px solid rgba(139,232,229,.35); border-radius: 10px; color: #d9f8f6; background: rgba(7,17,30,.78); box-shadow: 0 12px 30px rgba(0,0,0,.35); backdrop-filter: blur(16px); transition: opacity .16s var(--ease-out), transform .16s var(--ease-out); pointer-events: none; }
 .progression-tooltip b { color: #8be8e5; font: 9px "Space Grotesk"; white-space: nowrap; }
 .progression-tooltip em { color: #aebdce; font: normal 9px "DM Sans"; white-space: nowrap; }
 .progression-hover-point:hover .progression-tooltip { opacity: 1; transform: translate(-50%, 0); }
@@ -149,11 +149,28 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
 .weekly-comment-strip span { color: #8be8e5; font: 8px "Space Grotesk"; letter-spacing: .1em; }
 .weekly-comment-strip p { margin: 0; color: #d9edf0; font-size: 11px; line-height: 1.45; }
 .bar-column { position: relative; }
-.bar-comment-tooltip { position: absolute; z-index: 8; left: 50%; bottom: calc(100% + 38px); display: grid; gap: 4px; min-width: 135px; max-width: 220px; padding: 8px 9px; opacity: 0; pointer-events: none; transform: translate(-50%, 5px); border: 1px solid rgba(139,232,229,.35); border-radius: 9px; color: #d9f8f6; background: rgba(7,17,30,.96); box-shadow: 0 12px 30px rgba(0,0,0,.35); transition: opacity .16s var(--ease-out), transform .16s var(--ease-out); text-align: left; }
+.bar-comment-tooltip { position: absolute; z-index: 8; left: 50%; bottom: calc(100% + 38px); display: grid; gap: 4px; width: min(290px, calc(100vw - 32px)); padding: 9px 11px; opacity: 0; pointer-events: none; transform: translate(-50%, 5px); border: 1px solid rgba(139,232,229,.35); border-radius: 10px; color: #d9f8f6; background: rgba(7,17,30,.78); box-shadow: 0 12px 30px rgba(0,0,0,.35); backdrop-filter: blur(16px); transition: opacity .16s var(--ease-out), transform .16s var(--ease-out); text-align: left; }
 .bar-comment-tooltip strong { color: #8be8e5; font: 9px "Space Grotesk"; white-space: nowrap; }
-.bar-comment-tooltip span { color: #aebdce; font: 9px "DM Sans"; line-height: 1.35; }
+.bar-comment-tooltip span { display: -webkit-box; overflow: hidden; color: #aebdce; font: 9px "DM Sans"; line-height: 1.4; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
 .bar-column:hover .bar-comment-tooltip { opacity: 1; transform: translate(-50%, 0); }
-.progression-tooltip small { color: #d9edf0; font: 9px "DM Sans"; line-height: 1.35; }
+.progression-tooltip small { display: -webkit-box; overflow: hidden; color: #d9edf0; font: 9px "DM Sans"; line-height: 1.4; -webkit-box-orient: vertical; -webkit-line-clamp: 3; }
+.progression-hover-point.tooltip-left .progression-tooltip, .bar-column.tooltip-left .bar-comment-tooltip { left: 0; transform: translate(0, 4px); }
+.progression-hover-point.tooltip-left:hover .progression-tooltip, .bar-column.tooltip-left:hover .bar-comment-tooltip { transform: translate(0, 0); }
+.progression-hover-point.tooltip-right .progression-tooltip, .bar-column.tooltip-right .bar-comment-tooltip { left: auto; right: 0; transform: translate(0, 4px); }
+.progression-hover-point.tooltip-right:hover .progression-tooltip, .bar-column.tooltip-right:hover .bar-comment-tooltip { transform: translate(0, 0); }
+.bar-column.has-comment { cursor: pointer; }
+.bar-column.has-comment:focus-visible { outline: 1px solid #8be8e5; outline-offset: 4px; border-radius: 6px; }
+.comment-modal-backdrop { position: fixed; z-index: 260; inset: 0; display: grid; place-items: center; padding: 18px; background: rgba(2,7,16,.66); backdrop-filter: blur(12px); }
+.comment-detail-modal { width: min(620px, calc(100vw - 28px)); max-height: min(74vh, 560px); overflow: auto; border: 1px solid rgba(139,232,229,.34); border-radius: 18px; background: rgba(12,24,42,.94); box-shadow: 0 30px 80px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.09); backdrop-filter: blur(22px); }
+.comment-detail-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; padding: 20px 22px 17px; border-bottom: 1px solid rgba(255,255,255,.08); }
+.comment-detail-header .eyebrow { display: flex; align-items: center; gap: 7px; color: #8be8e5; }
+.comment-detail-header h2 { margin: 7px 0 0; color: #eef8ff; font: 600 21px "Space Grotesk"; letter-spacing: -.03em; }
+.comment-modal-close { flex: 0 0 auto; }
+.comment-detail-context { display: flex; align-items: center; gap: 9px; padding: 13px 22px; color: #8095aa; font-size: 10px; border-bottom: 1px solid rgba(255,255,255,.06); }
+.comment-detail-context svg { color: #8be8e5; }
+.comment-detail-context strong { margin-left: auto; color: #a8dfdc; font: 600 10px "Space Grotesk"; }
+.comment-detail-copy { margin: 0; padding: 24px 22px 28px; color: #dcebf4; white-space: pre-wrap; font: 14px/1.65 "DM Sans"; }
+.comment-detail-footer { padding: 12px 22px; color: #6f8498; font-size: 9px; border-top: 1px solid rgba(255,255,255,.07); }
 .empty-period-card { min-height: 205px; }
 .period-empty-status { display: inline-flex; align-items: center; gap: 8px; color: rgba(216,242,248,.64); font-size: 12px; white-space: nowrap; }
 .empty-period-body { display: flex; align-items: center; gap: 15px; margin-top: 28px; padding: 17px 20px; border: 1px solid rgba(158,215,240,.14); border-radius: 16px; background: rgba(6,22,42,.38); }
