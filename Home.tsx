@@ -26,7 +26,7 @@ function metricsOf(data: Activation[]) { const privilege = data.filter((item) =>
 
 const navSections = [
   { title: "Pilotage", items: [{ id: "dashboard", label: "Dashboard", icon: LayoutDashboard }, { id: "activity", label: "Activité", icon: Activity }, { id: "agents", label: "Agents", icon: Users }, { id: "shops", label: "Shops", icon: Store }] },
-  { title: "Lecture", items: [{ id: "activations", label: "Activations", icon: Zap }, { id: "analysis", label: "Analyse croisée", icon: Layers3 }] },
+  { title: "Lecture", items: [{ id: "activations", label: "Activations", icon: Zap }, { id: "analysis", label: "Performances & attendance", icon: Layers3 }] },
   { title: "Contrôle", items: [{ id: "quality", label: "Qualité des données", icon: ShieldCheck }, { id: "import", label: "Import & sources", icon: Database }] },
 ];
 
