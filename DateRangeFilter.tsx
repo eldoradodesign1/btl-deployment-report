@@ -18,18 +18,18 @@ function mondayOf(value: Date) {
   return result;
 }
 
-function getWeekRanges(data: Activation[]) {
+export function getWeekRanges(data: Activation[]) {
   const groups = new Map<string, string[]>();
   Array.from(new Set(data.map((item) => item.d))).sort().forEach((date) => {
     const monday = isoDate(mondayOf(toDate(date)));
     groups.set(monday, [...(groups.get(monday) ?? []), date]);
   });
-  return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b)).map(([key, dates], index) => ({ key, label: `S${index + 1}`, start: dates[0], end: dates.at(-1)!, activeDays: dates.length }));
+  return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b)).map(([key, dates], index) => ({ key, label: `Semaine ${index + 1}`, start: dates[0], end: dates.at(-1)!, activeDays: dates.length }));
 }
 
-type Props = { data: Activation[]; startDate: string; endDate: string; weeklyComment?: string; onChange: (startDate: string, endDate: string) => void };
+type Props = { data: Activation[]; startDate: string; endDate: string; weeklyComment?: string; onChange: (startDate: string, endDate: string) => void; compact?: boolean };
 
-export default function DateRangeFilter({ data, startDate, endDate, weeklyComment, onChange }: Props) {
+export default function DateRangeFilter({ data, startDate, endDate, weeklyComment, onChange, compact = false }: Props) {
   const dates = useMemo(() => Array.from(new Set(data.map((item) => item.d))).sort(), [data]);
   const weeks = useMemo(() => getWeekRanges(data), [data]);
   if (!dates.length) return <section className="period-card glass-card empty-period-card" aria-label="Filtre de période"><div className="period-heading"><div className="eyebrow"><CalendarDays size={14} /> Fenêtre d’analyse</div><div className="period-heading-copy"><h2>Aucune période chargée</h2><p>Importez un fichier CSV, XLSX ou XLS depuis « Import & sources » pour activer les filtres et les graphiques.</p></div><div className="period-empty-status"><span className="live-pulse" /> En attente d’import</div></div><div className="empty-period-body"><div className="empty-period-orbit"><SlidersHorizontal size={20} /></div><div><strong>Le cockpit est prêt pour vos données.</strong><span>Les dates, semaines, KPI, analyses et exports apparaîtront automatiquement après import.</span></div></div></section>;
@@ -46,6 +46,8 @@ export default function DateRangeFilter({ data, startDate, endDate, weeklyCommen
     if (side === "start") onChange(isoDate(new Date(min.getTime() + Math.min(offset, endOffset) * DAY)), endDate);
     else onChange(startDate, isoDate(new Date(min.getTime() + Math.max(offset, startOffset) * DAY)));
   };
+
+  if (compact) return <div className="compact-period-slider" aria-label="Filtre de période compact"><div className="compact-period-label"><SlidersHorizontal size={13} /><span><small>PÉRIODE</small><strong>{shortDate(toDate(startDate))} → {shortDate(toDate(endDate))}</strong></span></div><div className="dual-range compact-dual-range" style={{ "--range-start": startPercent, "--range-end": endPercent } as React.CSSProperties}><div className="range-track"><div className="range-fill" /></div><div className="range-handle-tooltip range-start-tooltip" style={{ left: startPercent }}><span>Début</span><strong>{shortDate(toDate(startDate))}</strong></div><div className="range-handle-tooltip range-end-tooltip" style={{ left: endPercent }}><span>Fin</span><strong>{shortDate(toDate(endDate))}</strong></div><input type="range" min={0} max={maxOffset} value={startOffset} onChange={(event) => selectOffset(Number(event.target.value), "start")} aria-label="Date de début" /><input type="range" min={0} max={maxOffset} value={endOffset} onChange={(event) => selectOffset(Number(event.target.value), "end")} aria-label="Date de fin" /></div></div>;
 
   return <section className="period-card glass-card" aria-label="Filtre de période">
     <div className="period-heading"><div className="eyebrow"><CalendarDays size={14} /> Fenêtre d’analyse</div><div className="period-heading-copy"><h2>Quelle période souhaitez-vous lire ?</h2><p>{dates.length} jours d’activité détectés dans la campagne importée.</p></div><div className="period-current"><span>Lecture actuelle</span><strong>{fullDate(startDate)} <ChevronRight size={15} /> {fullDate(endDate)}</strong></div></div>
