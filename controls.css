@@ -467,3 +467,25 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
   .mobile-control-menu button { width: 100%; display: flex; align-items: center; gap: 8px; padding: 10px 9px; border: 0; border-radius: 10px; color: #d8f7f5; background: transparent; font: 600 11px "Space Grotesk"; text-align: left; }
   .mobile-control-menu button:hover, .mobile-control-menu button:focus-visible { color: #062527; background: #8be8e5; outline: none; }
 }
+
+@media (min-width: 761px) { .mobile-profile-control { display: none !important; } }
+
+@media (max-width: 760px) {
+  .logout-top { display: none !important; }
+  .topbar-tools { padding-right: 42px; }
+  .mobile-profile-control { position: fixed; z-index: 2500; top: max(14px, env(safe-area-inset-top)); right: 10px; display: block; }
+  .mobile-profile-button { width: 34px; height: 34px; display: inline-flex; align-items: center; justify-content: center; gap: 3px; border: 1px solid rgba(139,232,229,.24); border-radius: 11px; color: #9fe1df; background: rgba(10,18,32,.82); box-shadow: 0 10px 24px rgba(0,0,0,.28), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
+  .mobile-profile-button .avatar { width: 20px; height: 20px; font-size: 7px; }
+  .mobile-profile-button.is-open { color: #062527; background: #8be8e5; box-shadow: 0 0 0 4px rgba(139,232,229,.1), 0 0 22px rgba(139,232,229,.52); }
+  .mobile-profile-menu { position: fixed !important; z-index: 2510; top: calc(56px + env(safe-area-inset-top)); right: 10px !important; left: auto !important; width: min(238px, calc(100vw - 20px)); max-height: calc(100dvh - 78px); overflow: auto; padding: 10px; border-radius: 16px; background: rgba(12,24,42,.97); box-shadow: 0 22px 55px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,255,255,.08); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); animation: halo-surface-in .24s var(--ease-spring) both; }
+  .mobile-profile-option { display: flex !important; align-items: center; gap: 8px; }
+  .mobile-profile-option-avatar { width: 24px; height: 24px; display: grid; flex: 0 0 auto; place-items: center; border: 1px solid rgba(139,232,229,.28); border-radius: 8px; color: #8be8e5; background: rgba(139,232,229,.1); font: 700 8px "Space Grotesk"; }
+  .mobile-profile-option-copy { display: grid !important; gap: 2px; min-width: 0; }
+  .mobile-profile-option-copy strong { color: #dcebf5; font: 600 10px "Space Grotesk"; }
+  .mobile-profile-option-copy small { color: #8497aa; font: 9px "DM Sans"; }
+  .mobile-profile-option em { margin-left: auto; }
+  .mobile-profile-menu .account-password-panel { margin-top: 5px; }
+  .compact-period-dropdown { left: 0 !important; right: 0 !important; width: 100vw !important; max-width: none !important; margin: 0 !important; transform: none !important; display: flex; justify-content: center; box-sizing: border-box; }
+  .compact-period-dropdown .compact-dual-range { width: 100% !important; max-width: 100% !important; margin-inline: 0 !important; }
+  .mobile-control-menu { left: 12px !important; right: 12px !important; width: auto !important; max-width: none !important; transform: none !important; bottom: calc(92px + env(safe-area-inset-bottom)) !important; }
+}
