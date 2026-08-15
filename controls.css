@@ -517,3 +517,49 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
   .period-card .week-strip, .period-card .range-head, .period-card .dual-range, .period-card .range-values { margin-left: 160px; }
   .period-card .week-strip { overflow: visible; }
 }
+
+/* Target matrix: a contained configuration surface that does not alter the operational dashboard rhythm. */
+.settings-section.target-matrix-section { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+.target-matrix-section .settings-label { width: 100%; min-width: 0; }
+.target-matrix { width: 100%; display: grid; gap: 1px; margin-top: 17px; overflow: hidden; border: 1px solid rgba(139,232,229,.15); border-radius: 12px; background: rgba(2,9,19,.33); }
+.target-matrix-head, .target-matrix-row, .target-matrix-foot { display: grid; grid-template-columns: minmax(130px, 1fr) 118px 118px; gap: 9px; align-items: center; padding: 9px 11px; }
+.target-matrix-head { color: #70869a; background: rgba(139,232,229,.055); font: 8px "Space Grotesk"; letter-spacing: .08em; text-transform: uppercase; }
+.target-matrix-row { border-top: 1px solid rgba(255,255,255,.055); }
+.target-matrix-row > strong { color: #d8e9f1; font: 500 11px "Space Grotesk"; }
+.target-matrix-row .number-stepper { height: 32px; border-radius: 8px; }
+.target-matrix-row .number-stepper button { width: 27px; font-size: 14px; }
+.target-matrix-row .number-stepper input { width: 48px; font-size: 10px; }
+.target-matrix-foot { border-top: 1px solid rgba(139,232,229,.16); color: #7790a3; background: rgba(139,232,229,.045); font-size: 9px; }
+.target-matrix-foot strong { color: #8be8e5; font: 600 12px "Space Grotesk"; text-align: center; }
+.target-matrix-note { max-width: 680px; margin: 10px 0 0; color: #70869a; font-size: 9px; line-height: 1.5; }
+@media (max-width: 760px) { .target-matrix-head, .target-matrix-row, .target-matrix-foot { grid-template-columns: minmax(92px, 1fr) 92px 92px; gap: 5px; padding: 8px; }.target-matrix-head { font-size: 7px; }.target-matrix-row > strong { font-size: 10px; }.target-matrix-row .number-stepper { height: 30px; }.target-matrix-row .number-stepper button { width: 23px; }.target-matrix-row .number-stepper input { width: 35px; } }
+
+/* Target series: secondary, restrained and always overlaid on the existing measures. */
+.target-legend-dot { width: 13px; height: 0; margin-left: 4px; border-top: 1px dashed #f3bd72; opacity: .9; }
+.progress-target-line { fill: none; stroke: #f3bd72; stroke-width: 1.35; stroke-dasharray: 5 5; opacity: .78; filter: drop-shadow(0 0 5px rgba(243,189,114,.28)); pointer-events: none; }
+.cursor-target-detail { color: #f3bd72; font: 8px "Space Grotesk"; white-space: nowrap; }
+.bar-target-overlay { position: absolute; z-index: 2; inset: 0 7px 21px; width: calc(100% - 14px); height: calc(100% - 21px); overflow: visible; pointer-events: none; }
+.bar-target-overlay polyline { fill: none; stroke: #f3bd72; stroke-width: 1.45; stroke-dasharray: 5 5; vector-effect: non-scaling-stroke; opacity: .82; filter: drop-shadow(0 0 4px rgba(243,189,114,.24)); }
+.chart-body .bar-column { z-index: 3; }
+.sparkline-target { stroke: #f3bd72; stroke-width: 1.15; stroke-dasharray: 3.5 3.5; opacity: .82; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 3px rgba(243,189,114,.24)); pointer-events: none; }
+
+/* Dashboard target disclosure: the target stays opt-in, while its aggregate remains a quiet BTL-only hero reference. */
+.hero-volume-line { display: flex; align-items: baseline; gap: 10px; }
+.hero-target { display: inline-grid; gap: 1px; padding-left: 10px; border-left: 1px solid rgba(243,189,114,.42); color: #f3bd72; text-align: left; }
+.hero-target small { color: rgba(243,189,114,.72) !important; font: 7px "Space Grotesk" !important; letter-spacing: .1em; }
+.hero-target b { color: #f3bd72; font: 600 18px/1 "Space Grotesk"; text-shadow: 0 0 13px rgba(243,189,114,.2); }
+.target-dashboard-control { display: flex; align-items: center; justify-content: flex-end; gap: 10px; min-height: 30px; margin: 9px 0 -2px; color: #77899d; font-size: 9px; }
+.target-dashboard-switch { display: inline-flex; align-items: center; gap: 7px; min-height: 28px; padding: 4px 9px 4px 5px; border: 1px solid rgba(243,189,114,.2); border-radius: 999px; color: #a9b8c6; background: rgba(11,22,39,.5); font: 600 9px "Space Grotesk"; transition: color .2s var(--ease-fluid), border-color .2s var(--ease-fluid), background .2s var(--ease-fluid), box-shadow .2s var(--ease-fluid); }
+.target-dashboard-switch i { width: 18px; height: 18px; position: relative; border-radius: 50%; background: rgba(255,255,255,.13); transition: background .2s var(--ease-fluid), transform .24s var(--ease-spring); }
+.target-dashboard-switch i::after { content: ""; position: absolute; width: 8px; height: 8px; top: 5px; left: 5px; border-radius: 50%; background: #7b8d9f; transition: background .2s var(--ease-fluid), box-shadow .2s var(--ease-fluid); }
+.target-dashboard-switch:hover { color: #dce7ed; border-color: rgba(243,189,114,.42); background: rgba(243,189,114,.07); }
+.target-dashboard-switch.is-active { color: #f5c782; border-color: rgba(243,189,114,.5); background: rgba(243,189,114,.11); box-shadow: 0 0 18px rgba(243,189,114,.1); }
+.target-dashboard-switch.is-active i { background: rgba(243,189,114,.22); transform: rotate(90deg); }
+.target-dashboard-switch.is-active i::after { background: #f3bd72; box-shadow: 0 0 9px rgba(243,189,114,.7); }
+@media (max-width: 760px) { .target-dashboard-control { margin-top: 7px; justify-content: space-between; }.target-dashboard-control > span { max-width: 205px; line-height: 1.25; }.hero-target b { font-size: 15px; } }
+
+/* The histogram has no target overlay while the switch is off; rebuild its compact legend without the dormant target label. */
+.chart-card:not(:has(.bar-target-overlay)) .chart-legend { gap: 6px; font-size: 0; }
+.chart-card:not(:has(.bar-target-overlay)) .chart-legend::before { content: "Activations"; color: #a9bbc9; font-size: 9px; }
+.chart-card:not(:has(.bar-target-overlay)) .target-legend-dot { display: none; }
+.chart-card:not(:has(.bar-target-overlay)) .chart-legend .legend-note { font-size: 9px; }
