@@ -1,3 +1,4 @@
+// Design philosophy: Halo Opaline — progression feedback snaps softly to observed days for a precise, tactile reading of field activity.
 import { useId, useRef, useState } from "react";
 import { commentExcerpt } from "./CommentDetailModal";
 
@@ -21,6 +22,7 @@ export default function ProgressionChart({ data, startDate, endDate, formatDate,
   const clipId = useId().replace(/:/g, "");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [hoverX, setHoverX] = useState<number | null>(null);
+  const [hoverY, setHoverY] = useState<number | null>(null);
   const [dragHandle, setDragHandle] = useState<"start" | "end" | null>(null);
   const progressionRef = useRef<HTMLDivElement | null>(null);
   const chartData: [string, number][] = data.length ? data : [["", 0]];
@@ -37,6 +39,10 @@ export default function ProgressionChart({ data, startDate, endDate, formatDate,
   const activeStart = x(startIndex); const activeEnd = x(endIndex < 0 ? chartData.length - 1 : endIndex);
   const peakIndex = chartData.reduce((best, current, currentIndex, all) => current[1] > all[best][1] ? currentIndex : best, 0);
   const hoveredPoint = hoveredIndex == null ? null : points[hoveredIndex];
+  const hoveredDatum = hoveredIndex == null ? null : chartData[hoveredIndex];
+  const hoverTooltipX = hoverX == null ? null : hoverX + 14;
+  const hoverTooltipY = hoverY == null ? null : Math.min(height - 12, Math.max(12, hoverY));
+  const tooltipReversed = hoverTooltipX != null && hoverTooltipX > width - 320;
   const updateDragFromPointer = (clientX: number) => {
     if (!dragHandle || !onRangeChange || chartData.length < 2) return;
     const bounds = progressionRef.current?.getBoundingClientRect();
@@ -52,25 +58,32 @@ export default function ProgressionChart({ data, startDate, endDate, formatDate,
   const handlePointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     const bounds = progressionRef.current?.getBoundingClientRect();
     if (!bounds || bounds.width <= 0) return;
-    setHoverX(Math.min(width, Math.max(0, ((event.clientX - bounds.left) / bounds.width) * width)));
+    const chartX = Math.min(width, Math.max(0, ((event.clientX - bounds.left) / bounds.width) * width));
+    const chartY = Math.min(height, Math.max(0, ((event.clientY - bounds.top) / bounds.height) * height));
+    const pointerX = event.clientX - bounds.left;
+    const snappedIndex = points.findIndex((point) => Math.abs((point.x / width) * bounds.width - pointerX) <= 5);
+    setHoverX(chartX);
+    setHoverY(chartY);
+    setHoveredIndex(snappedIndex === -1 ? null : snappedIndex);
     updateDragFromPointer(event.clientX);
   };
 
   return <article className={`progression-card glass-card ${readOnly ? "progression-readonly" : ""}`}>
     <div className="card-heading"><div><div className="eyebrow">PROGRESSION CAMPAGNE</div><h3>Le mouvement sur toute la campagne.</h3></div><div className="progression-meta"><span className="progression-dot" /> Zone filtrée en surbrillance</div></div>
-    <div className="progression-wrap" ref={progressionRef} onPointerMove={handlePointerMove} onPointerEnter={handlePointerMove} onPointerLeave={() => { if (!dragHandle) { setHoverX(null); setHoveredIndex(null); } }} onPointerUp={() => setDragHandle(null)}>
+    <div className="progression-wrap" ref={progressionRef} onPointerMove={handlePointerMove} onPointerEnter={handlePointerMove} onPointerLeave={() => { if (!dragHandle) { setHoverX(null); setHoverY(null); setHoveredIndex(null); } }} onPointerUp={() => setDragHandle(null)}>
       <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" aria-label="Courbe de progression des activations">
         <defs><linearGradient id={`${clipId}-fill`} x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#8be8e5" stopOpacity=".22" /><stop offset="1" stopColor="#8be8e5" stopOpacity="0" /></linearGradient><clipPath id={`${clipId}-zone`}><rect x={activeStart} y="0" width={Math.max(1, activeEnd - activeStart)} height={height} /></clipPath></defs>
         <line x1={padX} x2={width - padX} y1={baseline} y2={baseline} className="progress-axis" /><line x1={padX} x2={width - padX} y1={y(max / 2)} y2={y(max / 2)} className="progress-gridline" />
         <path d={areaPath} fill={`url(#${clipId}-fill)`} />
         <rect x={activeStart} y="10" width={Math.max(1, activeEnd - activeStart)} height={baseline - 10} className="progress-zone" />
         <path d={linePath} className="progress-line progress-line-muted" /><path d={linePath} className="progress-line progress-line-active" clipPath={`url(#${clipId}-zone)`} />
-        {hoverX != null && <line x1={hoverX} x2={hoverX} y1="10" y2={baseline} className="progress-hover-line" />}
+        {hoverX != null && <line x1={hoveredPoint?.x ?? hoverX} x2={hoveredPoint?.x ?? hoverX} y1="10" y2={baseline} className={`progress-hover-line ${hoveredPoint ? "is-snapped" : ""}`} />}
         <circle cx={activeStart} cy={y(chartData[startIndex]?.[1] ?? 0)} r="5" className="progress-handle progress-handle-draggable" onPointerDown={(event) => { if (!onRangeChange) return; event.preventDefault(); try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* Synthetic or unsupported pointer capture; the wrapper still tracks movement. */ } setDragHandle("start"); }} />
         <circle cx={activeEnd} cy={y(chartData[endIndex < 0 ? chartData.length - 1 : endIndex]?.[1] ?? 0)} r="5" className="progress-handle progress-handle-draggable" onPointerDown={(event) => { if (!onRangeChange) return; event.preventDefault(); try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* Synthetic or unsupported pointer capture; the wrapper still tracks movement. */ } setDragHandle("end"); }} />
         {chartData.map(([date, value], index) => <g key={`${date}-${index}`}><text x={x(index)} y={height - 9} className="progress-label" textAnchor={index === 0 ? "start" : index === chartData.length - 1 ? "end" : "middle"}>{date && (index === 0 || index === chartData.length - 1 || index === startIndex || index === endIndex) ? formatDate(date) : ""}</text><text x={x(index)} y={y(value) - 10} className="progress-value" textAnchor="middle">{index === peakIndex ? value : ""}</text></g>)}
       </svg>
-      <div className="progression-tooltip-layer" aria-label="Détails quotidiens">{chartData.map(([date, value], index) => { const hasComment = Boolean(dailyComments[date]); const label = date ? formatDate(date) : "Aucune date"; return <span className={`progression-hover-point has-value ${hasComment ? "is-clickable" : ""} ${index === 0 ? "tooltip-left" : index === chartData.length - 1 ? "tooltip-right" : ""}`} key={`tooltip-${date}-${index}`} style={{ left: `${(x(index) / width) * 100}%`, top: `${(y(value) / height) * 100}%` }} role={hasComment ? "button" : undefined} tabIndex={hasComment ? 0 : -1} aria-label={hasComment ? `Lire le commentaire du ${label}` : undefined} onMouseEnter={() => setHoveredIndex(index)} onMouseLeave={() => setHoveredIndex(null)} onClick={() => hasComment && onCommentOpen?.(date, value)} onKeyDown={(event) => { if (hasComment && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); onCommentOpen?.(date, value); } }}><span className="progression-tooltip"><b>{label}</b><em>{value} activations</em>{hasComment && <small>{commentExcerpt(dailyComments[date])}</small>}</span></span>; })}</div>
+      <div className="progression-tooltip-layer" aria-label="Détails quotidiens">{chartData.map(([date, value], index) => { const hasComment = Boolean(dailyComments[date]); const label = date ? formatDate(date) : "Aucune date"; return <span className={`progression-hover-point has-value ${hoveredIndex === index ? "is-active" : ""} ${hasComment ? "is-clickable" : ""}`} key={`tooltip-${date}-${index}`} style={{ left: `${(x(index) / width) * 100}%`, top: `${(y(value) / height) * 100}%` }} role={hasComment ? "button" : undefined} tabIndex={hasComment ? 0 : -1} aria-label={hasComment ? `Lire le commentaire du ${label}` : undefined} onFocus={() => { setHoverX(x(index)); setHoverY(y(value)); setHoveredIndex(index); }} onBlur={() => { setHoverX(null); setHoverY(null); setHoveredIndex(null); }} onClick={() => hasComment && onCommentOpen?.(date, value)} onKeyDown={(event) => { if (hasComment && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); onCommentOpen?.(date, value); } }} />; })}</div>
+      {hoveredDatum && hoverTooltipX != null && hoverTooltipY != null && <div className={`progression-cursor-tooltip ${tooltipReversed ? "is-reversed" : ""}`} style={{ left: `${((tooltipReversed ? hoverX! - 14 : hoverTooltipX) / width) * 100}%`, top: `${(hoverTooltipY / height) * 100}%` }}><b>{hoveredDatum[0] ? formatDate(hoveredDatum[0]) : "Aucune date"}</b><em>{hoveredDatum[1]} activations</em>{dailyComments[hoveredDatum[0]] && <small>{commentExcerpt(dailyComments[hoveredDatum[0]])}</small>}</div>}
     </div>
     <div className="progression-footer"><span>{data.length} jours actifs sur la campagne source</span><strong>{formatDate(startDate)} → {formatDate(endDate)}</strong></div>
   </article>;
