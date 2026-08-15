@@ -534,13 +534,18 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
 .target-matrix-note { max-width: 680px; margin: 10px 0 0; color: #70869a; font-size: 9px; line-height: 1.5; }
 @media (max-width: 760px) { .target-matrix-head, .target-matrix-row, .target-matrix-foot { grid-template-columns: minmax(92px, 1fr) 92px 92px; gap: 5px; padding: 8px; }.target-matrix-head { font-size: 7px; }.target-matrix-row > strong { font-size: 10px; }.target-matrix-row .number-stepper { height: 30px; }.target-matrix-row .number-stepper button { width: 23px; }.target-matrix-row .number-stepper input { width: 35px; } }
 
-/* Target series: secondary, restrained and always overlaid on the existing measures. */
+/* Target series: secondary, restrained and animated in place to preserve the dashboard’s operational rhythm. */
 .target-legend-dot { width: 13px; height: 0; margin-left: 4px; border-top: 1px dashed #f3bd72; opacity: .9; }
-.progress-target-line { fill: none; stroke: #f3bd72; stroke-width: 1.35; stroke-dasharray: 5 5; opacity: .78; filter: drop-shadow(0 0 5px rgba(243,189,114,.28)); pointer-events: none; }
+.target-legend-animated { display: inline-flex; align-items: center; max-width: 0; margin-left: 0; overflow: hidden; opacity: 0; transform: translateX(-5px); white-space: nowrap; transition: max-width .34s var(--ease-fluid), margin-left .34s var(--ease-fluid), opacity .22s var(--ease-fluid), transform .34s var(--ease-spring); }
+.target-legend-animated.is-visible { max-width: 145px; margin-left: 3px; opacity: 1; transform: translateX(0); }
+.progress-target-line { fill: none; stroke: #f3bd72; stroke-width: 1.35; stroke-dasharray: 5 5; stroke-dashoffset: 8; opacity: 0; transform-box: fill-box; transform-origin: center; transform: translateY(3px) scaleY(.985); filter: drop-shadow(0 0 5px rgba(243,189,114,.28)); pointer-events: none; transition: opacity .32s var(--ease-fluid), stroke-dashoffset .44s var(--ease-fluid), transform .44s var(--ease-spring); }
+.progress-target-line.is-visible { opacity: .78; stroke-dashoffset: 0; transform: translateY(0) scaleY(1); }
 .cursor-target-detail { color: #f3bd72; font: 8px "Space Grotesk"; white-space: nowrap; }
-.bar-target-overlay { position: absolute; z-index: 2; inset: 0 7px 21px; width: calc(100% - 14px); height: calc(100% - 21px); overflow: visible; pointer-events: none; }
+.bar-target-overlay { position: absolute; z-index: 2; inset: 0 7px 21px; width: calc(100% - 14px); height: calc(100% - 21px); overflow: visible; opacity: 0; transform: translateY(4px) scaleY(.985); transform-origin: bottom; pointer-events: none; transition: opacity .32s var(--ease-fluid), transform .44s var(--ease-spring); }
+.bar-target-overlay.is-visible { opacity: 1; transform: translateY(0) scaleY(1); }
 .bar-target-overlay polyline { fill: none; stroke: #f3bd72; stroke-width: 1.45; stroke-dasharray: 5 5; vector-effect: non-scaling-stroke; opacity: .82; filter: drop-shadow(0 0 4px rgba(243,189,114,.24)); }
 .chart-body .bar-column { z-index: 3; }
+.bar-chart .bar { transition: height .42s var(--ease-fluid); }
 .sparkline-target { stroke: #f3bd72; stroke-width: 1.15; stroke-dasharray: 3.5 3.5; opacity: .82; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 3px rgba(243,189,114,.24)); pointer-events: none; }
 
 /* Dashboard target disclosure: the target stays opt-in, while its aggregate remains a quiet BTL-only hero reference. */
@@ -549,14 +554,19 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
 .hero-target small { color: rgba(243,189,114,.72) !important; font: 7px "Space Grotesk" !important; letter-spacing: .1em; }
 .hero-target b { color: #f3bd72; font: 600 18px/1 "Space Grotesk"; text-shadow: 0 0 13px rgba(243,189,114,.2); }
 .target-dashboard-control { display: flex; align-items: center; justify-content: flex-end; gap: 10px; min-height: 30px; margin: 9px 0 -2px; color: #77899d; font-size: 9px; }
-.target-dashboard-switch { display: inline-flex; align-items: center; gap: 7px; min-height: 28px; padding: 4px 9px 4px 5px; border: 1px solid rgba(243,189,114,.2); border-radius: 999px; color: #a9b8c6; background: rgba(11,22,39,.5); font: 600 9px "Space Grotesk"; transition: color .2s var(--ease-fluid), border-color .2s var(--ease-fluid), background .2s var(--ease-fluid), box-shadow .2s var(--ease-fluid); }
+.target-dashboard-switch { display: inline-flex; align-items: center; gap: 7px; min-height: 28px; padding: 4px 9px 4px 5px; border: 1px solid rgba(243,189,114,.2); border-radius: 999px; color: #a9b8c6; background: rgba(11,22,39,.5); font: 600 9px "Space Grotesk"; transition: color .2s var(--ease-fluid), border-color .2s var(--ease-fluid), background .2s var(--ease-fluid), box-shadow .2s var(--ease-fluid), transform .18s var(--ease-fluid); }
 .target-dashboard-switch i { width: 18px; height: 18px; position: relative; border-radius: 50%; background: rgba(255,255,255,.13); transition: background .2s var(--ease-fluid), transform .24s var(--ease-spring); }
 .target-dashboard-switch i::after { content: ""; position: absolute; width: 8px; height: 8px; top: 5px; left: 5px; border-radius: 50%; background: #7b8d9f; transition: background .2s var(--ease-fluid), box-shadow .2s var(--ease-fluid); }
 .target-dashboard-switch:hover { color: #dce7ed; border-color: rgba(243,189,114,.42); background: rgba(243,189,114,.07); }
 .target-dashboard-switch.is-active { color: #f5c782; border-color: rgba(243,189,114,.5); background: rgba(243,189,114,.11); box-shadow: 0 0 18px rgba(243,189,114,.1); }
 .target-dashboard-switch.is-active i { background: rgba(243,189,114,.22); transform: rotate(90deg); }
 .target-dashboard-switch.is-active i::after { background: #f3bd72; box-shadow: 0 0 9px rgba(243,189,114,.7); }
+.target-dashboard-switch:active { transform: scale(.96); }
+.target-inline-switch { position: relative; isolation: isolate; }
+.target-inline-switch::after { content: attr(data-tooltip); position: absolute; z-index: 40; top: calc(100% + 8px); right: 0; width: max-content; max-width: 228px; padding: 7px 9px; border: 1px solid rgba(139,232,229,.14); border-radius: 8px; color: #d8e9f1; background: rgba(7,17,31,.9); box-shadow: 0 12px 24px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.05); font: 9px/1.3 "DM Sans"; letter-spacing: 0; opacity: 0; pointer-events: none; transform: translateY(-4px) scale(.98); transform-origin: top right; transition: opacity .18s var(--ease-fluid), transform .22s var(--ease-spring); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.target-inline-switch:hover::after, .target-inline-switch:focus-visible::after { opacity: 1; transform: translateY(0) scale(1); }
 @media (max-width: 760px) { .target-dashboard-control { margin-top: 7px; justify-content: space-between; }.target-dashboard-control > span { max-width: 205px; line-height: 1.25; }.hero-target b { font-size: 15px; } }
+@media (hover: none) { .target-inline-switch::after { display: none; } }
 
 /* The histogram has no target overlay while the switch is off; rebuild its compact legend without the dormant target label. */
 .chart-card:not(:has(.bar-target-overlay)) .chart-legend { gap: 6px; font-size: 0; }

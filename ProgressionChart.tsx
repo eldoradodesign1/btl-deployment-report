@@ -1,8 +1,8 @@
 // Design philosophy: Halo Opaline — progression feedback snaps softly to observed days for a precise, tactile reading of field activity.
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { commentExcerpt } from "./CommentDetailModal";
 
-type Props = { data: [string, number][]; targetData?: [string, number][]; startDate: string; endDate: string; formatDate: (value: string) => string; dailyComments?: Record<string, string>; onCommentOpen?: (date: string, value: number) => void; onRangeChange?: (startDate: string, endDate: string) => void; onToggleTargets?: () => void; readOnly?: boolean };
+type Props = { data: [string, number][]; targetData?: [string, number][]; showTargets?: boolean; startDate: string; endDate: string; formatDate: (value: string) => string; dailyComments?: Record<string, string>; onCommentOpen?: (date: string, value: number) => void; onRangeChange?: (startDate: string, endDate: string) => void; onToggleTargets?: () => void; readOnly?: boolean };
 type Point = { x: number; y: number };
 
 function smoothPath(points: Point[]) {
@@ -18,7 +18,7 @@ function smoothPath(points: Point[]) {
   return path;
 }
 
-export default function ProgressionChart({ data, targetData = [], startDate, endDate, formatDate, dailyComments = {}, onCommentOpen, onRangeChange, onToggleTargets, readOnly = false }: Props) {
+export default function ProgressionChart({ data, targetData = [], showTargets = false, startDate, endDate, formatDate, dailyComments = {}, onCommentOpen, onRangeChange, onToggleTargets, readOnly = false }: Props) {
   const clipId = useId().replace(/:/g, "");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [hoverX, setHoverX] = useState<number | null>(null);
@@ -28,7 +28,20 @@ export default function ProgressionChart({ data, targetData = [], startDate, end
   const chartData: [string, number][] = data.length ? data : [["", 0]];
   const width = 900; const height = 220; const padX = 34; const padTop = 22; const padBottom = 32;
   const targetByDate = new Map(targetData);
-  const max = Math.max(...chartData.map(([, value]) => value), ...targetData.map(([, value]) => value), 1);
+  const actualMax = Math.max(...chartData.map(([, value]) => value), 1);
+  const targetMax = Math.max(actualMax, ...targetData.map(([, value]) => value), 1);
+  const [displayMax, setDisplayMax] = useState(actualMax);
+  const displayMaxRef = useRef(actualMax);
+  useEffect(() => {
+    const nextMax = showTargets ? targetMax : actualMax;
+    const previousMax = displayMaxRef.current;
+    if (Math.abs(nextMax - previousMax) < .01) return;
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { displayMaxRef.current = nextMax; setDisplayMax(nextMax); return; }
+    let frame = 0; let start = 0; const duration = 420;
+    const step = (time: number) => { if (!start) start = time; const progress = Math.min(1, (time - start) / duration); const eased = 1 - Math.pow(1 - progress, 3); const value = previousMax + (nextMax - previousMax) * eased; displayMaxRef.current = value; setDisplayMax(value); if (progress < 1) frame = requestAnimationFrame(step); };
+    frame = requestAnimationFrame(step); return () => cancelAnimationFrame(frame);
+  }, [actualMax, showTargets, targetMax]);
+  const max = displayMax;
   const x = (index: number) => padX + (index / Math.max(1, chartData.length - 1)) * (width - padX * 2);
   const y = (value: number) => padTop + (1 - value / max) * (height - padTop - padBottom);
   const points = chartData.map(([, value], index) => ({ x: x(index), y: y(value) }));
@@ -72,7 +85,7 @@ export default function ProgressionChart({ data, targetData = [], startDate, end
   };
 
   return <article className={`progression-card glass-card ${readOnly ? "progression-readonly" : ""}`}>
-    <div className="card-heading"><div><div className="eyebrow">PROGRESSION CAMPAGNE</div><h3>Le mouvement sur toute la campagne.</h3></div><div className="progression-meta"><span className="progression-dot" /> Zone filtrée en surbrillance{targetData.length > 0 && <><span className="target-legend-dot" /> Objectif quotidien</>}{onToggleTargets && <button type="button" className={`target-dashboard-switch target-inline-switch ${targetData.length > 0 ? "is-active" : ""}`} aria-pressed={targetData.length > 0} onClick={onToggleTargets}><i /><b>Objectifs</b></button>}</div></div>
+    <div className="card-heading"><div><div className="eyebrow">PROGRESSION CAMPAGNE</div><h3>Le mouvement sur toute la campagne.</h3></div><div className="progression-meta"><span className="progression-dot" /> Zone filtrée en surbrillance{targetData.length > 0 && <span className={`target-legend-animated ${showTargets ? "is-visible" : ""}`}><span className="target-legend-dot" /> Objectif quotidien</span>}{onToggleTargets && <button type="button" className={`target-dashboard-switch target-inline-switch ${showTargets ? "is-active" : ""}`} data-tooltip={showTargets ? "Masquer l’objectif quotidien de la courbe" : "Afficher l’objectif quotidien de la courbe"} aria-label={showTargets ? "Masquer l’objectif quotidien de la courbe" : "Afficher l’objectif quotidien de la courbe"} aria-pressed={showTargets} onClick={onToggleTargets}><i /><b>Objectifs</b></button>}</div></div>
     <div className="progression-wrap" ref={progressionRef} onPointerMove={handlePointerMove} onPointerEnter={handlePointerMove} onPointerLeave={() => { if (!dragHandle) { setHoverX(null); setHoverY(null); setHoveredIndex(null); } }} onPointerUp={() => setDragHandle(null)}>
       <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" aria-label="Courbe de progression des activations">
         <defs><linearGradient id={`${clipId}-fill`} x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#8be8e5" stopOpacity=".22" /><stop offset="1" stopColor="#8be8e5" stopOpacity="0" /></linearGradient><clipPath id={`${clipId}-zone`}><rect x={activeStart} y="0" width={Math.max(1, activeEnd - activeStart)} height={height} /></clipPath></defs>
@@ -80,14 +93,14 @@ export default function ProgressionChart({ data, targetData = [], startDate, end
         <path d={areaPath} fill={`url(#${clipId}-fill)`} />
         <rect x={activeStart} y="10" width={Math.max(1, activeEnd - activeStart)} height={baseline - 10} className="progress-zone" />
         <path d={linePath} className="progress-line progress-line-muted" /><path d={linePath} className="progress-line progress-line-active" clipPath={`url(#${clipId}-zone)`} />
-        {targetPath && <path d={targetPath} className="progress-target-line" />}
+        {targetPath && <path d={targetPath} className={`progress-target-line ${showTargets ? "is-visible" : ""}`} />}
         {hoverX != null && <line x1={hoveredPoint?.x ?? hoverX} x2={hoveredPoint?.x ?? hoverX} y1="10" y2={baseline} className={`progress-hover-line ${hoveredPoint ? "is-snapped" : ""}`} />}
         <circle cx={activeStart} cy={y(chartData[startIndex]?.[1] ?? 0)} r="5" className="progress-handle progress-handle-draggable" onPointerDown={(event) => { if (!onRangeChange) return; event.preventDefault(); try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* Synthetic or unsupported pointer capture; the wrapper still tracks movement. */ } setDragHandle("start"); }} />
         <circle cx={activeEnd} cy={y(chartData[endIndex < 0 ? chartData.length - 1 : endIndex]?.[1] ?? 0)} r="5" className="progress-handle progress-handle-draggable" onPointerDown={(event) => { if (!onRangeChange) return; event.preventDefault(); try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* Synthetic or unsupported pointer capture; the wrapper still tracks movement. */ } setDragHandle("end"); }} />
         {chartData.map(([date, value], index) => <g key={`${date}-${index}`}><text x={x(index)} y={height - 9} className="progress-label" textAnchor={index === 0 ? "start" : index === chartData.length - 1 ? "end" : "middle"}>{date && (index === 0 || index === chartData.length - 1 || index === startIndex || index === endIndex) ? formatDate(date) : ""}</text><text x={x(index)} y={y(value) - 10} className="progress-value" textAnchor="middle">{index === peakIndex ? value : ""}</text></g>)}
       </svg>
       <div className="progression-tooltip-layer" aria-label="Détails quotidiens">{chartData.map(([date, value], index) => { const hasComment = Boolean(dailyComments[date]); const label = date ? formatDate(date) : "Aucune date"; return <span className={`progression-hover-point has-value ${hoveredIndex === index ? "is-active" : ""} ${hasComment ? "is-clickable" : ""}`} key={`tooltip-${date}-${index}`} style={{ left: `${(x(index) / width) * 100}%`, top: `${(y(value) / height) * 100}%` }} role={hasComment ? "button" : undefined} tabIndex={hasComment ? 0 : -1} aria-label={hasComment ? `Lire le commentaire du ${label}` : undefined} onFocus={() => { setHoverX(x(index)); setHoverY(y(value)); setHoveredIndex(index); }} onBlur={() => { setHoverX(null); setHoverY(null); setHoveredIndex(null); }} onClick={() => hasComment && onCommentOpen?.(date, value)} onKeyDown={(event) => { if (hasComment && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); onCommentOpen?.(date, value); } }} />; })}</div>
-      {hoveredDatum && hoverTooltipX != null && hoverTooltipY != null && <div className={`progression-cursor-tooltip ${tooltipReversed ? "is-reversed" : ""}`} style={{ left: `${((tooltipReversed ? hoverX! - 14 : hoverTooltipX) / width) * 100}%`, top: `${(hoverTooltipY / height) * 100}%` }}><b>{hoveredDatum[0] ? formatDate(hoveredDatum[0]) : "Aucune date"}</b><em>{hoveredDatum[1]} activations</em>{targetByDate.has(hoveredDatum[0]) && <span className="cursor-target-detail">Objectif · {targetByDate.get(hoveredDatum[0])}</span>}{dailyComments[hoveredDatum[0]] && <small>{commentExcerpt(dailyComments[hoveredDatum[0]])}</small>}</div>}
+      {hoveredDatum && hoverTooltipX != null && hoverTooltipY != null && <div className={`progression-cursor-tooltip ${tooltipReversed ? "is-reversed" : ""}`} style={{ left: `${((tooltipReversed ? hoverX! - 14 : hoverTooltipX) / width) * 100}%`, top: `${(hoverTooltipY / height) * 100}%` }}><b>{hoveredDatum[0] ? formatDate(hoveredDatum[0]) : "Aucune date"}</b><em>{hoveredDatum[1]} activations</em>{showTargets && targetByDate.has(hoveredDatum[0]) && <span className="cursor-target-detail">Objectif · {targetByDate.get(hoveredDatum[0])}</span>}{dailyComments[hoveredDatum[0]] && <small>{commentExcerpt(dailyComments[hoveredDatum[0]])}</small>}</div>}
     </div>
     <div className="progression-footer"><span>{data.length} jours actifs sur la campagne source</span><strong>{formatDate(startDate)} → {formatDate(endDate)}</strong></div>
   </article>;
