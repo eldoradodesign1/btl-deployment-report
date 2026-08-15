@@ -568,6 +568,21 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
 @media (max-width: 760px) { .target-dashboard-control { margin-top: 7px; justify-content: space-between; }.target-dashboard-control > span { max-width: 205px; line-height: 1.25; }.hero-target b { font-size: 15px; } }
 @media (hover: none) { .target-inline-switch::after { display: none; } }
 
+/* Mobile target controls: retain the same interaction while keeping the chart headers compact and unclipped. */
+@media (max-width: 760px) {
+  .progression-meta, .chart-legend { gap: 5px; }
+  .target-inline-switch { flex: 0 0 auto; min-height: 26px; padding-right: 7px; }
+  .target-inline-switch b { font-size: 8px; }
+  .target-inline-switch i { width: 16px; height: 16px; }
+  .target-inline-switch i::after { width: 7px; height: 7px; top: 4.5px; left: 4.5px; }
+  .target-legend-animated.is-visible { max-width: 72px; margin-left: 1px; }
+  .target-legend-animated.is-visible::after { content: "Objectif"; color: #f3bd72; font: 8px "Space Grotesk"; white-space: nowrap; }
+  .target-legend-animated.is-visible { font-size: 0; }
+  .target-legend-animated.is-visible .target-legend-dot { flex: 0 0 auto; margin-left: 1px; }
+  .progress-target-line { transition-duration: .25s, .34s, .34s; }
+  .bar-target-overlay { transition-duration: .25s, .34s; }
+}
+
 /* The histogram has no target overlay while the switch is off; rebuild its compact legend without the dormant target label. */
 .chart-card:not(:has(.bar-target-overlay)) .chart-legend { gap: 6px; font-size: 0; }
 .chart-card:not(:has(.bar-target-overlay)) .chart-legend::before { content: "Activations"; color: #a9bbc9; font-size: 9px; }

@@ -37,7 +37,7 @@ export default function ProgressionChart({ data, targetData = [], showTargets = 
     const previousMax = displayMaxRef.current;
     if (Math.abs(nextMax - previousMax) < .01) return;
     if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { displayMaxRef.current = nextMax; setDisplayMax(nextMax); return; }
-    let frame = 0; let start = 0; const duration = 420;
+    let frame = 0; let start = 0; const duration = typeof window !== "undefined" && window.innerWidth <= 760 ? 300 : 420;
     const step = (time: number) => { if (!start) start = time; const progress = Math.min(1, (time - start) / duration); const eased = 1 - Math.pow(1 - progress, 3); const value = previousMax + (nextMax - previousMax) * eased; displayMaxRef.current = value; setDisplayMax(value); if (progress < 1) frame = requestAnimationFrame(step); };
     frame = requestAnimationFrame(step); return () => cancelAnimationFrame(frame);
   }, [actualMax, showTargets, targetMax]);
