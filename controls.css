@@ -119,11 +119,11 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
 .report-kpi { position: relative; min-height: 70px; display: grid; place-items: center; align-content: center; background: #fff; border-top: 3px solid #d80b0b; border-bottom: 1px solid #dfe4e7; box-shadow: 0 2px 6px rgba(21,34,45,.06); }
 .report-kpi > span:not(.report-kpi-icon):not(.report-kpi-progress) { color: #57636d; font: 700 9px Arial, sans-serif; text-align: center; }
 .report-kpi strong { margin-top: 5px; color: #d50909; font: 700 24px Arial, sans-serif; }
-.report-kpi-icon { position: absolute; top: 8px; right: 9px; display: grid; place-items: center; color: #c1c9ce; opacity: .8; }
-.report-kpi.has-progress { padding-bottom: 8px; }
-.report-kpi.has-progress strong { margin-top: 3px; }
-.report-kpi-progress { display: block; width: min(78%, 184px); height: 5px; margin-top: 6px; overflow: visible; border-radius: 999px; background: #e5eaed; box-shadow: inset 0 1px 1px rgba(38,50,61,.08); }
-.report-kpi-progress i { display: block; min-width: 4px; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #d50909, #ef6a5d); box-shadow: 0 0 8px rgba(213,9,9,.18); }
+.report-kpi-icon { position: absolute; top: 7px; right: 8px; display: grid; place-items: center; color: #d50909; opacity: .3; }
+.report-kpi.has-progress { min-height: 92px; padding: 8px 13px 13px; align-content: start; }
+.report-kpi-progress { position: relative; display: block; width: min(100%, 252px); height: 34px; margin-top: 9px; overflow: hidden; border: 1px solid rgba(213,9,9,.16); border-radius: 4px; background: rgba(213,9,9,.14); box-shadow: inset 0 1px 2px rgba(126,8,8,.12); }
+.report-kpi-progress i { position: absolute; inset: 0 auto 0 0; display: block; min-width: 4px; height: 100%; border-radius: 3px; background: linear-gradient(90deg, #d50909, #ef6a5d); box-shadow: 0 0 12px rgba(213,9,9,.22); }
+.report-kpi-progress b { position: absolute; inset: 0; z-index: 1; display: grid; place-items: center; color: #7e0808; font: 700 13px Arial, sans-serif; letter-spacing: .01em; text-shadow: 0 1px 0 rgba(255,255,255,.42); }
 .report-top-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(270px, .65fr); gap: 18px; margin-bottom: 18px; }
 .report-progress-block, .report-donut-block, .report-performance-grid > div { padding: 16px; background: #fff; border: 1px solid #dce2e6; }
 .report-section-heading span, .report-section-heading strong { display: block; }

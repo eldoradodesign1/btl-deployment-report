@@ -149,7 +149,6 @@ export default function Home() {
       if (isTextEntry(target) || isTextEntry(active)) return;
       if (event.key === "Escape") { setAccountOpen(false); setAccountPasswordOpen(false); setAccountPasswordError(""); setNotificationsOpen(false); setHelpOpen(false); setHelpGuideOpen(false); setMobileControlOpen(false); setSidebarOpen(false); setReportOpen(false); return; }
       const key = event.key.toLowerCase();
-      if (reportOpen) return;
       if ((event.ctrlKey || event.metaKey) && event.altKey) {
         const startIndex = dates.indexOf(startDate); const endIndex = dates.indexOf(endDate); const lastIndex = dates.length - 1;
         if (startIndex < 0 || endIndex < 0 || lastIndex < 0) return;
@@ -158,6 +157,7 @@ export default function Home() {
         if (key === "arrowup") { event.preventDefault(); setEndDate(dates[Math.min(lastIndex, endIndex + 1)]); return; }
         if (key === "arrowdown") { event.preventDefault(); setEndDate(dates[Math.max(startIndex, endIndex - 1)]); return; }
       }
+      if (reportOpen) return;
       if (event.altKey) {
         if (key === "s") { event.preventDefault(); setAccountOpen((value) => !value); return; }
         if (key === "l") { event.preventDefault(); onLogout(); return; }
