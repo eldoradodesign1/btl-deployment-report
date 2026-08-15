@@ -106,7 +106,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
 
 .export-top-button { display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 0 12px; border: 1px solid rgba(139,232,229,.32); border-radius: 10px; color: #a8f5f1; background: rgba(139,232,229,.09); font: 10px "Space Grotesk"; transition: transform .16s var(--ease-out), background .18s, border-color .18s; }
 .export-top-button:hover { background: rgba(139,232,229,.18); border-color: rgba(139,232,229,.62); transform: translateY(-1px); }
-.report-modal-backdrop { position: fixed; z-index: 100; inset: 0; display: grid; place-items: center; padding: 18px; background: rgba(2,7,16,.76); backdrop-filter: blur(15px); }
+.report-modal-backdrop { position: fixed; z-index: 3000; inset: 0; display: grid; place-items: center; padding: 18px; background: rgba(2,7,16,.76); backdrop-filter: blur(15px); }
 .report-modal { width: min(1180px, 100%); max-height: min(94vh, 920px); display: flex; flex-direction: column; overflow: hidden; border: 1px solid rgba(139,232,229,.25); border-radius: 18px; background: rgba(13,23,40,.98); box-shadow: 0 35px 100px rgba(0,0,0,.52); }
 .report-modal-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 20px; padding: 20px 24px 17px; border-bottom: 1px solid rgba(255,255,255,.08); }
 .report-modal-header h2 { margin: 6px 0 3px; color: #f2f8ff; font: 600 20px "Space Grotesk"; letter-spacing: -.04em; }
@@ -328,6 +328,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
 .app-shell { width: 100vw; height: 100dvh; min-height: 100dvh; position: relative; isolation: isolate; }
 .sidebar { height: 100dvh; }
 .main-stage { height: 100dvh; min-height: 0; position: relative; z-index: 1; }
+.main-stage:has(.report-modal-backdrop) { z-index: 3000; }
 
 /* The real compact slider fills the space between the active menu title and the topbar tools. */
 .topbar > .compact-period-slider { flex: 1 1 auto; width: 100%; min-width: 0; max-width: none; margin: 0 18px; padding: 0; }
@@ -497,6 +498,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
   .compact-period-dropdown { position: static !important; display: flex !important; align-items: center; width: 100% !important; min-width: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; backdrop-filter: none !important; animation: none !important; }
   .compact-period-dropdown-heading { display: none !important; }
   .compact-period-dropdown .compact-dual-range { flex: 1 1 auto; width: 100% !important; min-width: 0 !important; margin: 0 !important; }
+  .period-card .week-strip, .period-card .range-head, .period-card .dual-range, .period-card .range-values { margin-left: 0 !important; }
   .topbar-tools { margin-left: auto !important; flex: 0 0 auto !important; }
 }
 
