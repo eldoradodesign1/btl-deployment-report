@@ -489,3 +489,21 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
   .compact-period-dropdown .compact-dual-range { width: 100% !important; max-width: 100% !important; margin-inline: 0 !important; }
   .mobile-control-menu { left: 12px !important; right: 12px !important; width: auto !important; max-width: none !important; transform: none !important; bottom: calc(92px + env(safe-area-inset-bottom)) !important; }
 }
+
+/* Desktop-only correction: the docked period is the actual slider, not a summary tile; mobile keeps its pill/dropdown behavior above. */
+@media (min-width: 761px) {
+  .topbar > .compact-period-slider { flex: 1 1 auto !important; width: 100% !important; min-width: 0 !important; max-width: none !important; margin: 0 22px !important; padding: 0 !important; gap: 0 !important; }
+  .compact-period-pill { display: none !important; }
+  .compact-period-dropdown { position: static !important; display: flex !important; align-items: center; width: 100% !important; min-width: 0 !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; backdrop-filter: none !important; animation: none !important; }
+  .compact-period-dropdown-heading { display: none !important; }
+  .compact-period-dropdown .compact-dual-range { flex: 1 1 auto; width: 100% !important; min-width: 0 !important; margin: 0 !important; }
+  .topbar-tools { margin-left: auto !important; flex: 0 0 auto !important; }
+}
+
+/* Desktop reference layout for the first Dashboard section; intentionally scoped away from mobile. */
+@media (min-width: 1200px) {
+  .period-card .period-heading { flex-wrap: nowrap; }
+  .period-card .period-heading > .eyebrow { min-width: 142px; }
+  .period-card .week-strip, .period-card .range-head, .period-card .dual-range, .period-card .range-values { margin-left: 160px; }
+  .period-card .week-strip { overflow: visible; }
+}
