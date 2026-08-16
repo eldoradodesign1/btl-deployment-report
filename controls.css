@@ -137,6 +137,10 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
 .report-progress-base { stroke: #9daab3; stroke-width: 1.4; }
 .report-progress-active { fill: none; stroke: #d30b0b; stroke-width: 2.6; filter: drop-shadow(0 0 2px rgba(213,9,9,.18)); }
 .report-selection-mask { fill: #fff; }
+.report-selection-callout { position: absolute; z-index: 3; top: 12px; min-width: 142px; padding: 7px 9px; transform: translateX(-50%); border: 1px solid rgba(213,9,9,.22); border-radius: 7px; color: #6c1515; background: rgba(255,255,255,.92); box-shadow: 0 10px 24px rgba(84,29,29,.14); pointer-events: none; text-align: center; backdrop-filter: blur(8px); }
+.report-selection-callout small, .report-selection-callout b { display: block; }
+.report-selection-callout small { color: #a94a45; font: 700 7px Arial, sans-serif; letter-spacing: .09em; text-transform: uppercase; }
+.report-selection-callout b { margin-top: 2px; color: #8d1515; font: 700 10px Arial, sans-serif; white-space: nowrap; }
 .report-mini-axis { display: flex; justify-content: space-between; padding-top: 7px; color: #76828c; font: 9px Arial; }
 .report-progress-target { fill: none; stroke: #d3871c; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 3 2; vector-effect: non-scaling-stroke; }
 .report-target-comparison { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #e3e8eb; }
