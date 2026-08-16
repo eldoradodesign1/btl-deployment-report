@@ -23,8 +23,12 @@ export default function ProgressionChart({ data, targetData = [], showTargets = 
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [hoverX, setHoverX] = useState<number | null>(null);
   const [hoverY, setHoverY] = useState<number | null>(null);
+  const [smoothHoverX, setSmoothHoverX] = useState<number | null>(null);
   const [dragHandle, setDragHandle] = useState<"start" | "end" | null>(null);
   const progressionRef = useRef<HTMLDivElement | null>(null);
+  const hoverLineTargetRef = useRef<number | null>(null);
+  const hoverLineDisplayRef = useRef<number | null>(null);
+  const hoverLineFrameRef = useRef<number | null>(null);
   const chartData: [string, number][] = data.length ? data : [["", 0]];
   const width = 900; const height = 220; const padX = 34; const padTop = 22; const padBottom = 32;
   const targetByDate = new Map(targetData);
@@ -59,6 +63,29 @@ export default function ProgressionChart({ data, targetData = [], showTargets = 
   const hoverTooltipX = hoverX == null ? null : hoverX + 14;
   const hoverTooltipY = hoverY == null ? null : Math.min(height - 12, Math.max(12, hoverY));
   const tooltipReversed = hoverTooltipX != null && hoverTooltipX > width - 320;
+  const moveHoverLine = (nextX: number | null) => {
+    hoverLineTargetRef.current = nextX;
+    if (nextX == null) {
+      if (hoverLineFrameRef.current != null) cancelAnimationFrame(hoverLineFrameRef.current);
+      hoverLineFrameRef.current = null;
+      hoverLineDisplayRef.current = null;
+      setSmoothHoverX(null);
+      return;
+    }
+    if (hoverLineFrameRef.current != null) return;
+    const tick = () => {
+      const target = hoverLineTargetRef.current;
+      if (target == null) { hoverLineFrameRef.current = null; return; }
+      const previous = hoverLineDisplayRef.current ?? target;
+      const next = previous + (target - previous) * 0.22;
+      hoverLineDisplayRef.current = Math.abs(target - next) < 0.08 ? target : next;
+      setSmoothHoverX(hoverLineDisplayRef.current);
+      if (hoverLineDisplayRef.current !== target) hoverLineFrameRef.current = requestAnimationFrame(tick);
+      else hoverLineFrameRef.current = null;
+    };
+    hoverLineFrameRef.current = requestAnimationFrame(tick);
+  };
+  useEffect(() => () => { if (hoverLineFrameRef.current != null) cancelAnimationFrame(hoverLineFrameRef.current); }, []);
   const updateDragFromPointer = (clientX: number) => {
     if (!dragHandle || !onRangeChange || chartData.length < 2) return;
     const bounds = progressionRef.current?.getBoundingClientRect();
@@ -78,15 +105,17 @@ export default function ProgressionChart({ data, targetData = [], showTargets = 
     const chartY = Math.min(height, Math.max(0, ((event.clientY - bounds.top) / bounds.height) * height));
     const pointerX = event.clientX - bounds.left;
     const snappedIndex = points.findIndex((point) => Math.abs((point.x / width) * bounds.width - pointerX) <= 5);
+    const nextLineX = snappedIndex === -1 ? chartX : points[snappedIndex].x;
     setHoverX(chartX);
     setHoverY(chartY);
     setHoveredIndex(snappedIndex === -1 ? null : snappedIndex);
+    moveHoverLine(nextLineX);
     updateDragFromPointer(event.clientX);
   };
 
   return <article className={`progression-card glass-card ${readOnly ? "progression-readonly" : ""}`}>
     <div className="card-heading"><div><div className="eyebrow">PROGRESSION CAMPAGNE</div><h3>Le mouvement sur toute la campagne.</h3></div><div className="progression-meta"><span className="progression-dot" /> Zone filtrée en surbrillance{targetData.length > 0 && <span className={`target-legend-animated ${showTargets ? "is-visible" : ""}`}><span className="target-legend-dot" /> Objectif quotidien</span>}{onToggleTargets && <button type="button" className={`target-dashboard-switch target-inline-switch ${showTargets ? "is-active" : ""}`} data-tooltip={showTargets ? "Masquer l’objectif quotidien de la courbe" : "Afficher l’objectif quotidien de la courbe"} aria-label={showTargets ? "Masquer l’objectif quotidien de la courbe" : "Afficher l’objectif quotidien de la courbe"} aria-pressed={showTargets} onClick={onToggleTargets}><i /><b>Objectifs</b></button>}</div></div>
-    <div className="progression-wrap" ref={progressionRef} onPointerMove={handlePointerMove} onPointerEnter={handlePointerMove} onPointerLeave={() => { if (!dragHandle) { setHoverX(null); setHoverY(null); setHoveredIndex(null); } }} onPointerUp={() => setDragHandle(null)}>
+    <div className="progression-wrap" ref={progressionRef} onPointerMove={handlePointerMove} onPointerEnter={handlePointerMove} onPointerLeave={() => { if (!dragHandle) { setHoverX(null); setHoverY(null); setHoveredIndex(null); moveHoverLine(null); } }} onPointerUp={() => setDragHandle(null)}>
       <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" aria-label="Courbe de progression des activations">
         <defs><linearGradient id={`${clipId}-fill`} x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#8be8e5" stopOpacity=".22" /><stop offset="1" stopColor="#8be8e5" stopOpacity="0" /></linearGradient><clipPath id={`${clipId}-zone`}><rect x={activeStart} y="0" width={Math.max(1, activeEnd - activeStart)} height={height} /></clipPath></defs>
         <line x1={padX} x2={width - padX} y1={baseline} y2={baseline} className="progress-axis" /><line x1={padX} x2={width - padX} y1={y(max / 2)} y2={y(max / 2)} className="progress-gridline" />
@@ -94,7 +123,7 @@ export default function ProgressionChart({ data, targetData = [], showTargets = 
         <rect x={activeStart} y="10" width={Math.max(1, activeEnd - activeStart)} height={baseline - 10} className="progress-zone" />
         <path d={linePath} className="progress-line progress-line-muted" /><path d={linePath} className="progress-line progress-line-active" clipPath={`url(#${clipId}-zone)`} />
         {targetPath && <path d={targetPath} className={`progress-target-line ${showTargets ? "is-visible" : ""}`} />}
-        {hoverX != null && <line x1={hoveredPoint?.x ?? hoverX} x2={hoveredPoint?.x ?? hoverX} y1="10" y2={baseline} className={`progress-hover-line ${hoveredPoint ? "is-snapped" : ""}`} />}
+        {smoothHoverX != null && <line x1={smoothHoverX} x2={smoothHoverX} y1="10" y2={baseline} className={`progress-hover-line ${hoveredPoint ? "is-snapped" : ""}`} />}
         <circle cx={activeStart} cy={y(chartData[startIndex]?.[1] ?? 0)} r="5" className="progress-handle progress-handle-draggable" onPointerDown={(event) => { if (!onRangeChange) return; event.preventDefault(); try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* Synthetic or unsupported pointer capture; the wrapper still tracks movement. */ } setDragHandle("start"); }} />
         <circle cx={activeEnd} cy={y(chartData[endIndex < 0 ? chartData.length - 1 : endIndex]?.[1] ?? 0)} r="5" className="progress-handle progress-handle-draggable" onPointerDown={(event) => { if (!onRangeChange) return; event.preventDefault(); try { event.currentTarget.setPointerCapture(event.pointerId); } catch { /* Synthetic or unsupported pointer capture; the wrapper still tracks movement. */ } setDragHandle("end"); }} />
         {chartData.map(([date, value], index) => <g key={`${date}-${index}`}><text x={x(index)} y={height - 9} className="progress-label" textAnchor={index === 0 ? "start" : index === chartData.length - 1 ? "end" : "middle"}>{date && (index === 0 || index === chartData.length - 1 || index === startIndex || index === endIndex) ? formatDate(date) : ""}</text><text x={x(index)} y={y(value) - 10} className="progress-value" textAnchor="middle">{index === peakIndex ? value : ""}</text></g>)}

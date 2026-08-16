@@ -120,8 +120,8 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
 .report-kpi > span:not(.report-kpi-icon):not(.report-kpi-progress), .report-kpi > strong { position: relative; z-index: 1; }
 .report-kpi > span:not(.report-kpi-icon):not(.report-kpi-progress) { color: #57636d; font: 700 9px Arial, sans-serif; text-align: center; }
 .report-kpi strong { margin-top: 5px; color: #d50909; font: 700 24px Arial, sans-serif; }
-.report-kpi-icon { position: absolute; z-index: 0; top: -25px; right: -23px; width: 112px; height: 112px; display: grid; place-items: center; color: #d50909; opacity: .27; pointer-events: none; }
-.report-kpi-icon svg { width: 82px; height: 82px; }
+.report-kpi-icon { position: absolute; z-index: 0; top: -46px; right: -42px; width: 162px; height: 162px; display: grid; place-items: center; color: #d50909; opacity: .08; transform: rotate(35deg); pointer-events: none; }
+.report-kpi-icon svg { width: 132px; height: 132px; stroke-width: 2.1; }
 .report-kpi.has-progress { min-height: 92px; padding: 8px 13px 13px; align-content: start; }
 .report-kpi-progress { position: relative; display: block; width: min(100%, 252px); height: 34px; margin-top: 9px; overflow: hidden; border: 1px solid rgba(213,9,9,.16); border-radius: 4px; background: rgba(213,9,9,.14); box-shadow: inset 0 1px 2px rgba(126,8,8,.12); }
 .report-kpi-progress i { position: absolute; inset: 0 auto 0 0; display: block; min-width: 4px; height: 100%; border-radius: 3px; background: linear-gradient(90deg, #d50909, #ef6a5d); box-shadow: 0 0 12px rgba(213,9,9,.22); }
@@ -263,7 +263,7 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
 .dual-range input::-webkit-slider-thumb, .dual-range input::-moz-range-thumb { transition: transform .18s var(--ease-fluid), box-shadow .22s var(--ease-fluid), background-color .22s var(--ease-fluid); }
 .dual-range input:active::-webkit-slider-thumb, .dual-range input:active::-moz-range-thumb { transform: scale(1.15); box-shadow: 0 0 0 5px rgba(139,232,229,.18), 0 0 22px rgba(139,232,229,.76); cursor: grabbing; }
 .progress-line, .progress-line-active, .progress-line-muted { stroke-linecap: round; stroke-linejoin: round; }
-.progress-hover-line { stroke: rgba(139,232,229,.42); stroke-width: 1; stroke-dasharray: 3 5; pointer-events: none; animation: halo-line-in .18s var(--ease-fluid) both; transition: x1 .22s var(--ease-fluid), x2 .22s var(--ease-fluid), stroke .18s var(--ease-fluid), filter .18s var(--ease-fluid); }
+.progress-hover-line { stroke: rgba(139,232,229,.42); stroke-width: 1; stroke-dasharray: 3 5; pointer-events: none; animation: halo-line-in .18s var(--ease-fluid) both; transition: stroke .18s var(--ease-fluid), filter .18s var(--ease-fluid), opacity .18s var(--ease-fluid); }
 .progress-hover-line.is-snapped { stroke: rgba(139,232,229,.76); stroke-dasharray: 2 4; filter: drop-shadow(0 0 4px rgba(139,232,229,.5)); }
 .progression-tooltip, .bar-comment-tooltip { background: rgba(7,17,30,.5); border-color: rgba(139,232,229,.46); box-shadow: 0 18px 45px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.12); backdrop-filter: blur(27px) saturate(155%); -webkit-backdrop-filter: blur(27px) saturate(155%); transition: opacity .24s var(--ease-fluid), transform .24s var(--ease-fluid), box-shadow .24s var(--ease-fluid); }
 .progression-hover-point:hover .progression-tooltip, .bar-column:hover .bar-comment-tooltip { box-shadow: 0 21px 52px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.16); }
