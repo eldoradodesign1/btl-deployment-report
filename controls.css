@@ -613,3 +613,22 @@ input[type="date"]::-webkit-calendar-picker-indicator { opacity: .7; filter: inv
 .chart-card:not(:has(.bar-target-overlay)) .chart-legend::before { content: "Activations"; color: #a9bbc9; font-size: 9px; }
 .chart-card:not(:has(.bar-target-overlay)) .target-legend-dot { display: none; }
 .chart-card:not(:has(.bar-target-overlay)) .chart-legend .legend-note { font-size: 9px; }
+
+/* BTL persistence: concise edit controls extend the existing Halo Opaline surfaces without changing dashboard geometry. */
+.comment-detail-copy.is-empty { color: rgba(207, 225, 239, .62); font-style: italic; }
+.comment-detail-generating { min-height: 84px; display: flex; align-items: center; gap: 10px; margin: 0 22px 14px; padding: 18px; color: #c4f8ff; background: rgba(99, 240, 255, .055); border: 1px solid rgba(99, 240, 255, .14); border-radius: 14px; font-size: 12px; line-height: 1.45; }
+.comment-detail-editor { width: 100%; min-height: 145px; resize: vertical; border: 1px solid rgba(127, 236, 231, .28); border-radius: 14px; background: rgba(6, 18, 36, .72); color: #edfaff; padding: 14px 15px; font: inherit; line-height: 1.6; outline: none; }
+.comment-detail-editor:focus { border-color: rgba(127, 236, 231, .72); box-shadow: 0 0 0 3px rgba(127, 236, 231, .08); }
+.comment-detail-actions { display: flex; justify-content: flex-end; align-items: center; gap: 9px; margin-top: 15px; flex-wrap: wrap; }
+.comment-detail-error { margin-top: 12px; color: #ffb6b2; font-size: 12px; line-height: 1.45; }
+.is-spinning { animation: comment-spin .8s linear infinite; }
+@keyframes comment-spin { to { transform: rotate(360deg); } }
+.weekly-comment-strip button { margin-top: 9px; border: 0; background: transparent; color: #8be8e5; display: inline-flex; gap: 7px; align-items: center; padding: 0; font: 700 11px/1.2 "DM Sans", Arial, sans-serif; cursor: pointer; }
+.weekly-comment-strip button:hover { color: #d0ffff; }
+.gemini-settings-fields { display: grid; grid-template-columns: minmax(210px, 1.5fr) minmax(150px, .8fr) auto; gap: 10px; align-items: end; margin-top: 16px; }
+.gemini-settings-fields label { display: grid; gap: 6px; min-width: 0; color: rgba(215, 239, 247, .62); font: 700 10px/1.1 "DM Sans", Arial, sans-serif; text-transform: uppercase; letter-spacing: .08em; }
+.gemini-settings-fields label:first-child { position: relative; }
+.gemini-settings-fields label:first-child svg { position: absolute; left: 11px; bottom: 11px; color: #8be8e5; }
+.gemini-settings-fields input { width: 100%; min-width: 0; background: rgba(6, 18, 36, .66); border: 1px solid rgba(139, 232, 229, .16); color: #effaff; border-radius: 10px; min-height: 38px; padding: 0 11px; font: 500 13px "DM Sans", Arial, sans-serif; }
+.gemini-settings-fields label:first-child input { padding-left: 33px; }
+@media (max-width: 760px) { .gemini-settings-fields { grid-template-columns: 1fr; } .gemini-settings-fields .soft-button { justify-self: start; } .comment-detail-actions { justify-content: stretch; } .comment-detail-actions button { flex: 1 1 145px; justify-content: center; } }
