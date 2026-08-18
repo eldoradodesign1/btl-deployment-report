@@ -27,9 +27,9 @@ export function getWeekRanges(data: Activation[]) {
   return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b)).map(([key, dates], index) => ({ key, label: `Semaine ${index + 1}`, start: dates[0], end: dates.at(-1)!, activeDays: dates.length }));
 }
 
-type Props = { data: Activation[]; startDate: string; endDate: string; weeklyComment?: string; onChange: (startDate: string, endDate: string) => void; compact?: boolean; role?: "btl" | "vodacom"; onWeeklyCommentOpen?: (week: number, comment: string) => void };
+type Props = { data: Activation[]; startDate: string; endDate: string; weeklyComment?: string; customPeriodComment?: string; onChange: (startDate: string, endDate: string) => void; compact?: boolean; role?: "btl" | "vodacom"; onWeeklyCommentOpen?: (week: number, comment: string) => void; onCustomPeriodCommentOpen?: () => void };
 
-export default function DateRangeFilter({ data, startDate, endDate, weeklyComment, onChange, compact = false, role = "vodacom", onWeeklyCommentOpen }: Props) {
+export default function DateRangeFilter({ data, startDate, endDate, weeklyComment, customPeriodComment, onChange, compact = false, role = "vodacom", onWeeklyCommentOpen, onCustomPeriodCommentOpen }: Props) {
   const dates = useMemo(() => Array.from(new Set(data.map((item) => item.d))).sort(), [data]);
   const weeks = useMemo(() => getWeekRanges(data), [data]);
   const [compactOpen, setCompactOpen] = useState(() => compact && typeof window !== "undefined" && window.innerWidth > 760);
@@ -62,6 +62,8 @@ export default function DateRangeFilter({ data, startDate, endDate, weeklyCommen
   const startOffset = offsetBetween(min, toDate(startDate));
   const endOffset = offsetBetween(min, toDate(endDate));
   const allActive = startDate === minDate && endDate === maxDate;
+  const exactWeek = weeks.find((week) => week.start === startDate && week.end === endDate);
+  const isCustomPeriod = !exactWeek;
   const startPercent = `${Math.min(100, Math.max(0, (startOffset / maxOffset) * 100))}%`;
   const endPercent = `${Math.min(100, Math.max(0, (endOffset / maxOffset) * 100))}%`;
   const selectOffset = (offset: number, side: "start" | "end") => {
@@ -77,6 +79,6 @@ export default function DateRangeFilter({ data, startDate, endDate, weeklyCommen
     <div className="range-head"><div><SlidersHorizontal size={14} /> Affiner au jour près</div><span>Min. {fullDate(minDate)} · Max. {fullDate(maxDate)}</span></div>
     <div className="dual-range" style={{ "--range-start": startPercent, "--range-end": endPercent } as React.CSSProperties}><div className="range-track"><div className="range-fill" /></div><div className="range-handle-tooltip range-start-tooltip" style={{ left: startPercent }}><span>Début</span><strong>{shortDate(toDate(startDate))}</strong></div><div className="range-handle-tooltip range-end-tooltip" style={{ left: endPercent }}><span>Fin</span><strong>{shortDate(toDate(endDate))}</strong></div><input type="range" min={0} max={maxOffset} value={startOffset} onChange={(event) => selectOffset(Number(event.target.value), "start")} aria-label="Date de début" /><input type="range" min={0} max={maxOffset} value={endOffset} onChange={(event) => selectOffset(Number(event.target.value), "end")} aria-label="Date de fin" /></div>
     <div className="range-values"><div><span>Date début</span><strong>{fullDate(startDate)}</strong></div><div className="range-line" /><div className="range-value-end"><span>Date fin</span><strong>{fullDate(endDate)}</strong></div></div>
-    {(weeklyComment || role === "btl") && <div className="weekly-comment-strip"><span>COMMENTAIRE HEBDOMADAIRE</span><p>{weeklyComment || "Aucun commentaire hebdomadaire enregistré pour cette sélection."}</p>{role === "btl" && onWeeklyCommentOpen && <button type="button" onClick={() => onWeeklyCommentOpen(Math.max(1, weeks.findIndex((week) => week.start === startDate && week.end === endDate) + 1), weeklyComment ?? "")}><>{weeklyComment ? <MessageSquareText size={14} /> : <Sparkles size={14} />}</> {weeklyComment ? "Modifier" : "Générer par IA"}</button>}</div>}
+    {exactWeek ? (weeklyComment || role === "btl") && <div className="weekly-comment-strip"><span>COMMENTAIRE HEBDOMADAIRE</span><p>{weeklyComment || "Aucun commentaire hebdomadaire enregistré pour cette sélection."}</p>{role === "btl" && onWeeklyCommentOpen && <button type="button" onClick={() => onWeeklyCommentOpen(weeks.indexOf(exactWeek) + 1, weeklyComment ?? "")}><>{weeklyComment ? <MessageSquareText size={14} /> : <Sparkles size={14} />}</> {weeklyComment ? "Modifier" : "Générer par IA"}</button>}</div> : isCustomPeriod && <div className={`weekly-comment-strip custom-period-comment-strip ${customPeriodComment ? "has-comment" : "is-empty"}`}><span>COMMENTAIRE DE PÉRIODE · LOCAL</span>{customPeriodComment ? <p>{customPeriodComment}</p> : <div className="custom-period-comment-empty"><strong>Votre sélection ne correspond pas à une semaine précise.</strong><p>{role === "btl" ? "Générez une synthèse IA pour l’ajouter à l’aperçu et aux exports de cette période." : "Générez une synthèse IA locale pour l’ajouter à l’aperçu et aux exports de cette période."}</p></div>}{onCustomPeriodCommentOpen && <button type="button" onClick={onCustomPeriodCommentOpen}><>{customPeriodComment ? <MessageSquareText size={14} /> : <Sparkles size={14} />}</> {customPeriodComment ? role === "btl" ? "Modifier (local)" : "Régénérer par IA" : "Générer par IA"}</button>}</div>}
   </section>;
 }

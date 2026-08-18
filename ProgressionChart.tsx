@@ -3,7 +3,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import { commentExcerpt } from "./CommentDetailModal";
 
 // Design philosophy: Halo Opaline — shared target visibility is legible to both roles while BTL keeps the control.
-type Props = { data: [string, number][]; targetData?: [string, number][]; showTargets?: boolean; startDate: string; endDate: string; formatDate: (value: string) => string; dailyComments?: Record<string, string>; onCommentOpen?: (date: string, value: number) => void; onRangeChange?: (startDate: string, endDate: string) => void; onToggleTargets?: () => void; readOnly?: boolean; editable?: boolean };
+type Props = { data: [string, number][]; targetData?: [string, number][]; showTargets?: boolean; targetsLoading?: boolean; startDate: string; endDate: string; formatDate: (value: string) => string; dailyComments?: Record<string, string>; onCommentOpen?: (date: string, value: number) => void; onRangeChange?: (startDate: string, endDate: string) => void; onToggleTargets?: () => void; readOnly?: boolean; editable?: boolean };
 type Point = { x: number; y: number };
 
 function smoothPath(points: Point[]) {
@@ -19,7 +19,7 @@ function smoothPath(points: Point[]) {
   return path;
 }
 
-export default function ProgressionChart({ data, targetData = [], showTargets = false, startDate, endDate, formatDate, dailyComments = {}, onCommentOpen, onRangeChange, onToggleTargets, readOnly = false, editable = false }: Props) {
+export default function ProgressionChart({ data, targetData = [], showTargets = false, targetsLoading = false, startDate, endDate, formatDate, dailyComments = {}, onCommentOpen, onRangeChange, onToggleTargets, readOnly = false, editable = false }: Props) {
   const clipId = useId().replace(/:/g, "");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [hoverX, setHoverX] = useState<number | null>(null);
@@ -147,7 +147,7 @@ export default function ProgressionChart({ data, targetData = [], showTargets = 
   };
 
   return <article className={`progression-card glass-card ${readOnly ? "progression-readonly" : ""}`}>
-    <div className="card-heading"><div><div className="eyebrow">PROGRESSION CAMPAGNE</div><h3>Le mouvement sur toute la campagne.</h3></div><div className="progression-meta"><span className="progression-dot" /> Zone filtrée en surbrillance{targetData.length > 0 && <span className={`target-legend-animated ${showTargets ? "is-visible" : ""}`}><span className="target-legend-dot" /> Objectif quotidien</span>}{targetData.length > 0 && <button type="button" disabled={!onToggleTargets} className={`target-dashboard-switch target-inline-switch ${showTargets ? "is-active" : ""}`} data-tooltip={onToggleTargets ? (showTargets ? "Masquer l’objectif quotidien de la courbe" : "Afficher l’objectif quotidien de la courbe") : "Affichage des objectifs piloté par BTL"} aria-label={onToggleTargets ? (showTargets ? "Masquer l’objectif quotidien de la courbe" : "Afficher l’objectif quotidien de la courbe") : "Affichage des objectifs piloté par BTL"} aria-pressed={showTargets} onClick={onToggleTargets}><i /><b>Objectifs</b></button>}</div></div>
+    <div className="card-heading"><div><div className="eyebrow">PROGRESSION CAMPAGNE</div><h3>Le mouvement sur toute la campagne.</h3></div><div className="progression-meta"><span className="progression-dot" /> Zone filtrée en surbrillance{targetData.length > 0 && <span className={`target-legend-animated ${showTargets ? "is-visible" : ""}`}><span className="target-legend-dot" /> Objectif quotidien</span>}{targetData.length > 0 && <button type="button" disabled={!onToggleTargets || targetsLoading} className={`target-dashboard-switch target-inline-switch ${showTargets ? "is-active" : ""} ${targetsLoading ? "is-loading" : ""}`} data-tooltip={targetsLoading ? "Synchronisation des objectifs partagés…" : onToggleTargets ? (showTargets ? "Masquer l’objectif quotidien de la courbe" : "Afficher l’objectif quotidien de la courbe") : "Affichage des objectifs piloté par BTL"} aria-label={targetsLoading ? "Synchronisation des objectifs partagés" : onToggleTargets ? (showTargets ? "Masquer l’objectif quotidien de la courbe" : "Afficher l’objectif quotidien de la courbe") : "Affichage des objectifs piloté par BTL"} aria-pressed={showTargets} onClick={onToggleTargets}><i /><b>{targetsLoading ? "Synchro" : "Objectifs"}</b></button>}</div></div>
     <div className="progression-wrap" ref={progressionRef} onPointerMove={handlePointerMove} onPointerEnter={handlePointerMove} onPointerLeave={() => { if (!dragHandle) { setHoverX(null); setHoverY(null); setHoveredIndex(null); moveHoverLine(null); } }} onPointerUp={() => setDragHandle(null)}>
       <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" aria-label="Courbe de progression des activations">
         <defs><linearGradient id={`${clipId}-fill`} x1="0" x2="0" y1="0" y2="1"><stop offset="0" stopColor="#8be8e5" stopOpacity=".22" /><stop offset="1" stopColor="#8be8e5" stopOpacity="0" /></linearGradient><clipPath id={`${clipId}-zone`}><rect x={activeStart} y="0" width={Math.max(1, activeEnd - activeStart)} height={height} /></clipPath></defs>
