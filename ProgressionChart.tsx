@@ -19,7 +19,12 @@ function smoothPath(points: Point[]) {
   return path;
 }
 
-export default function ProgressionChart({ data, targetData = [], showTargets = false, targetsLoading = false, startDate, endDate, formatDate, dailyComments = {}, onCommentOpen, onRangeChange, onToggleTargets, readOnly = false, editable = false }: Props) {
+export default function ProgressionChart({ data, targetData = [], showTargets: suppliedShowTargets = false, targetsLoading = false, startDate, endDate, formatDate, dailyComments = {}, onCommentOpen, onRangeChange, onToggleTargets, readOnly = false, editable = false }: Props) {
+  const merchantCampaign = typeof window !== "undefined" && localStorage.getItem("btl-selected-campaign-type") === "brand_ambassador";
+  const merchantPreferenceKey = typeof window !== "undefined" ? `btl-merchant-progress-targets:${localStorage.getItem("btl-selected-campaign") ?? "default"}` : "btl-merchant-progress-targets:default";
+  const [merchantTargetsVisible, setMerchantTargetsVisible] = useState(() => typeof localStorage !== "undefined" && localStorage.getItem(merchantPreferenceKey) === "true");
+  if (merchantCampaign && editable && !onToggleTargets) onToggleTargets = () => setMerchantTargetsVisible((current) => { const next = !current; localStorage.setItem(merchantPreferenceKey, String(next)); return next; });
+  const showTargets = merchantCampaign ? merchantTargetsVisible : suppliedShowTargets;
   const clipId = useId().replace(/:/g, "");
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [hoverX, setHoverX] = useState<number | null>(null);
