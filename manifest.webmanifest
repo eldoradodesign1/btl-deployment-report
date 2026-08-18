@@ -3,8 +3,8 @@
   "short_name": "BTL Report",
   "description": "Pilotage des activations terrain Vodacom Privilège.",
   "start_url": "./",
-  "display": "fullscreen",
-  "display_override": ["fullscreen", "window-controls-overlay", "standalone"],
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "background_color": "#080e1c",
   "theme_color": "#090e1b",
   "icons": [
