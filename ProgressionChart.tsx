@@ -31,9 +31,44 @@ export default function ProgressionChart({ data, targetData = [], showTargets = 
   const hoverLineFrameRef = useRef<number | null>(null);
   const chartData: [string, number][] = data.length ? data : [["", 0]];
   const width = 900; const height = 220; const padX = 34; const padTop = 22; const padBottom = 32;
+  const x = (index: number) => padX + (index / Math.max(1, chartData.length - 1)) * (width - padX * 2);
   const targetByDate = new Map(targetData);
   const actualMax = Math.max(...chartData.map(([, value]) => value), 1);
   const targetMax = Math.max(actualMax, ...targetData.map(([, value]) => value), 1);
+  const startIndex = Math.max(0, chartData.findIndex(([date]) => date && date >= startDate));
+  const endIndex = Math.max(startIndex, chartData.findIndex(([date]) => date && date > endDate) - 1);
+  const rangeEndIndex = endIndex < 0 ? chartData.length - 1 : endIndex;
+  const selectionRef = useRef({ start: x(startIndex), end: x(rangeEndIndex) });
+  const selectionFrameRef = useRef<number | null>(null);
+  const [animatedSelection, setAnimatedSelection] = useState(() => selectionRef.current);
+  useEffect(() => {
+    const target = { start: x(startIndex), end: x(rangeEndIndex) };
+    const from = selectionRef.current;
+    if (Math.abs(from.start - target.start) < .1 && Math.abs(from.end - target.end) < .1) return;
+    if (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      selectionRef.current = target;
+      setAnimatedSelection(target);
+      return;
+    }
+    if (selectionFrameRef.current != null) cancelAnimationFrame(selectionFrameRef.current);
+    let startedAt = 0;
+    const duration = typeof window !== "undefined" && window.innerWidth <= 760 ? 340 : 440;
+    const animate = (time: number) => {
+      if (!startedAt) startedAt = time;
+      const progress = Math.min(1, (time - startedAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 4);
+      const next = {
+        start: from.start + (target.start - from.start) * eased,
+        end: from.end + (target.end - from.end) * eased,
+      };
+      selectionRef.current = next;
+      setAnimatedSelection(next);
+      if (progress < 1) selectionFrameRef.current = requestAnimationFrame(animate);
+      else selectionFrameRef.current = null;
+    };
+    selectionFrameRef.current = requestAnimationFrame(animate);
+    return () => { if (selectionFrameRef.current != null) cancelAnimationFrame(selectionFrameRef.current); };
+  }, [endIndex, rangeEndIndex, startIndex]);
   const [displayMax, setDisplayMax] = useState(actualMax);
   const displayMaxRef = useRef(actualMax);
   useEffect(() => {
@@ -46,7 +81,6 @@ export default function ProgressionChart({ data, targetData = [], showTargets = 
     frame = requestAnimationFrame(step); return () => cancelAnimationFrame(frame);
   }, [actualMax, showTargets, targetMax]);
   const max = displayMax;
-  const x = (index: number) => padX + (index / Math.max(1, chartData.length - 1)) * (width - padX * 2);
   const y = (value: number) => padTop + (1 - value / max) * (height - padTop - padBottom);
   const points = chartData.map(([, value], index) => ({ x: x(index), y: y(value) }));
   const targetPoints = chartData.map(([date], index) => ({ x: x(index), y: y(targetByDate.get(date) ?? 0) }));
@@ -54,9 +88,7 @@ export default function ProgressionChart({ data, targetData = [], showTargets = 
   const targetPath = targetData.length ? smoothPath(targetPoints) : "";
   const baseline = height - padBottom;
   const areaPath = points.length ? `${linePath} L ${points.at(-1)!.x},${baseline} L ${points[0].x},${baseline} Z` : "";
-  const startIndex = Math.max(0, chartData.findIndex(([date]) => date && date >= startDate));
-  const endIndex = Math.max(startIndex, chartData.findIndex(([date]) => date && date > endDate) - 1);
-  const activeStart = x(startIndex); const activeEnd = x(endIndex < 0 ? chartData.length - 1 : endIndex);
+  const activeStart = animatedSelection.start; const activeEnd = animatedSelection.end;
   const peakIndex = chartData.reduce((best, current, currentIndex, all) => current[1] > all[best][1] ? currentIndex : best, 0);
   const hoveredPoint = hoveredIndex == null ? null : points[hoveredIndex];
   const hoveredDatum = hoveredIndex == null ? null : chartData[hoveredIndex];
