@@ -240,6 +240,8 @@ export default function Home() {
       if (event.altKey) {
         if (key === "s") { event.preventDefault(); setAccountOpen((value) => !value); return; }
         if (key === "l") { event.preventDefault(); onLogout(); return; }
+        if (key === "p") { const privilege = campaigns.find((campaign) => campaign.code === vodacomCampaignCode); if (privilege) { event.preventDefault(); selectCampaign(privilege); } return; }
+        if (key === "m") { const merchant = campaigns.find((campaign) => campaign.campaignType === "brand_ambassador"); if (merchant) { event.preventDefault(); selectCampaign(merchant); } return; }
         if (key === "0") { const first = dates[0]; const last = dates.at(-1); if (first && last) { event.preventDefault(); setStartDate(first); setEndDate(last); } return; }
         if (/^[1-9]$/.test(key)) { const index = Number(key); const week = weekRanges[index - 1]; if (week) { event.preventDefault(); setStartDate(week.start); setEndDate(week.end); } return; }
         return;
@@ -253,7 +255,7 @@ export default function Home() {
     };
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [dates, endDate, permissions.canConfigure, reportOpen, startDate, weekRanges]);
+  }, [campaigns, dates, endDate, permissions.canConfigure, reportOpen, startDate, weekRanges]);
   const onImport = (records: Activation[], nextIssues: QualityIssue[]) => { setData(records); setDailyComments({}); setWeeklyComments({}); setIssues(nextIssues); setDataSource("import"); const nextDates = dateList(records); setStartDate(nextDates[0] ?? startDate); setEndDate(nextDates.at(-1) ?? endDate); setPage("dashboard"); };
   const onAdminAuthenticate = (phone: string, password: string): Promise<SupabaseAdminProfile> => authenticateSupabaseAdmin(phone, password);
   const onSupabaseSync = async (config: SupabaseConfig) => { const client = createSupabaseClient(config); const availableCampaigns = await loadCampaigns(client); setCampaigns(availableCampaigns); const campaign = availableCampaigns.find((item) => item.id === selectedCampaign?.id) ?? availableCampaigns.find((item) => item.code === vodacomCampaignCode) ?? availableCampaigns[0]; const snapshot = await loadCampaignSnapshot(campaign, client); setData(snapshot.records); setDailyComments(snapshot.dailyComments); setWeeklyComments(snapshot.weeklyComments); setDataSource("supabase"); saveSupabaseConfig(config); setSupabaseConfig(config); const nextDates = dateList(snapshot.records); setStartDate(nextDates[0] ?? campaign?.startsOn ?? "2026-07-23"); setEndDate(nextDates.at(-1) ?? campaign?.endsOn ?? campaign?.startsOn ?? "2026-08-08"); };
