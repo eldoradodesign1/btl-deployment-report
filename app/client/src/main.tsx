@@ -5,6 +5,7 @@ import "./campaigns.css";
 import "./orbit/orbit.css";
 import "./orbit/orbit-screens.css";
 import "./orbit/orbit-chrome.css";
+import "./orbit/export-v2.css";
 import { applyAppearance } from "./orbit/appearance";
 
 applyAppearance();

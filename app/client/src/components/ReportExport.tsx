@@ -10,6 +10,7 @@ import { exportExactSynthesisWorkbook } from "@/lib/excelReport";
 import AnimatedNumber from "@/components/AnimatedNumber";
 import DateRangeFilter from "@/components/DateRangeFilter";
 import { campaignTerms } from "@/lib/campaigns";
+import ReportExportV2 from "@/components/ReportExportV2";
 
 type ReportProps = {
   data: Activation[];
@@ -28,6 +29,18 @@ type ReportProps = {
   onPeriodChange: (startDate: string, endDate: string) => void;
   onClose: () => void;
 };
+
+// Nouvelle fabrication par défaut ; l'export classique reste disponible tant qu'elle n'est pas validée.
+const EXPORT_MODE_KEY = "btl-export-mode";
+type ExportMode = "v2" | "classic";
+const readExportMode = (): ExportMode => { try { return localStorage.getItem(EXPORT_MODE_KEY) === "classic" ? "classic" : "v2"; } catch { return "v2"; } };
+
+export default function ReportExport(props: ReportProps) {
+  const [mode, setMode] = useState<ExportMode>(readExportMode);
+  const choose = (next: ExportMode) => { try { localStorage.setItem(EXPORT_MODE_KEY, next); } catch { /* préférence facultative */ } setMode(next); };
+  if (mode === "classic") return <ClassicReportExport {...props} onUseModern={() => choose("v2")} />;
+  return <ReportExportV2 {...props} onUseClassic={() => choose("classic")} />;
+}
 
 type ReportPart = { label: string; value: number; color: string };
 type Report = ReturnType<typeof buildReport>;
@@ -174,7 +187,7 @@ async function exportPdfFromHtml(startDate: string, endDate: string) {
   }
 }
 
-export default function ReportExport({ data, filtered, fullDaily, targetDaily, fullTargetDaily, startDate, endDate, rangeLabel, role, formatNumber, formatDate, weeklyComment = "", customPeriodComment = "", onPeriodChange, onClose }: ReportProps) {
+function ClassicReportExport({ data, filtered, fullDaily, targetDaily, fullTargetDaily, startDate, endDate, rangeLabel, role, formatNumber, formatDate, weeklyComment = "", customPeriodComment = "", onPeriodChange, onClose, onUseModern }: ReportProps & { onUseModern: () => void }) {
   const selectionMaskId = useId().replace(/:/g, "");
   const rangeKey = `${startDate}:${endDate}`;
   const previousRangeRef = useRef(rangeKey);
@@ -247,7 +260,7 @@ export default function ReportExport({ data, filtered, fullDaily, targetDaily, f
         </section>
         <section className="report-performance-grid"><div><div className="report-section-heading"><span>{participantPerformance}</span><strong>{participantDetail}</strong></div>{report.agents.slice(0, 6).map(([name, value]) => <div className="report-bar-row" key={name}><span>{name}</span><div><i style={{ width: `${(value / hostMax) * 100}%` }} /></div><b><AnimatedNumber value={value} /></b></div>)}</div><div><div className="report-section-heading"><span>{locationPerformance}</span><strong>{locationDetail}</strong></div>{report.shops.slice(0, 6).map(([name, value]) => <div className="report-bar-row shop-bar" key={name}><span>{name}</span><div><i style={{ width: `${(value / shopMax) * 100}%` }} /></div><b><AnimatedNumber value={value} /></b></div>)}</div></section>
       </div>
-      <footer className="report-modal-footer"><span>Le rapport suit la période active et les données locales chargées.</span><div><button className="secondary-button" onClick={exportXlsx}><FileSpreadsheet size={16} /> Télécharger en Excel</button><button className="primary-button" onClick={exportPdf}><FileText size={16} /> Télécharger en PDF</button><button className="icon-button" onClick={() => window.print()} aria-label="Imprimer ou enregistrer en PDF"><Download size={17} /></button></div></footer>
+      <footer className="report-modal-footer"><span>Le rapport suit la période active et les données locales chargées. <button type="button" className="xv2-link" onClick={onUseModern}>Nouvel export</button></span><div><button className="secondary-button" onClick={exportXlsx}><FileSpreadsheet size={16} /> Télécharger en Excel</button><button className="primary-button" onClick={exportPdf}><FileText size={16} /> Télécharger en PDF</button><button className="icon-button" onClick={() => window.print()} aria-label="Imprimer ou enregistrer en PDF"><Download size={17} /></button></div></footer>
     </div>
   </div>;
 }
