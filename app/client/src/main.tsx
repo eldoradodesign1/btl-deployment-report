@@ -10,6 +10,7 @@ import "./orbit/donnees.css";
 import "./orbit/export-v2.css";
 import "./orbit/mobile.css";
 import "./orbit/orbit-controls.css";
+import "./orbit/acces-ia.css";
 import { applyAppearance } from "./orbit/appearance";
 
 applyAppearance();
