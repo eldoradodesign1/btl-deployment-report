@@ -1,0 +1,84 @@
+/* ── Accès client : une ligne par campagne, trois interrupteurs ── */
+.orbit-access { display: grid; gap: 16px; }
+.orbit-access-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.orbit-access-head h2 { margin: 0; font: 700 22px var(--font-display-safe); color: rgb(var(--o-ink)); }
+.orbit-access-head p { margin: 4px 0 0; font-size: 13.5px; color: rgb(var(--o-mute)); }
+.orbit-access-head .orbit-search input { width: 260px; }
+.orbit-access-message { margin: 0; padding: 10px 14px; border-radius: 14px; font-size: 13px; color: rgb(var(--o-warn, 255 160 120)); background: rgb(var(--o-glass) / .06); }
+.orbit-access-list { display: grid; padding: 6px 0; border-radius: 22px; overflow: hidden; }
+.orbit-access-row { display: grid; grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); align-items: center; gap: 12px; padding: 14px 20px; border-top: 1px solid rgb(var(--o-glass) / .08); transition: background-color .2s ease, opacity .25s ease; }
+.orbit-access-row:first-child, .orbit-access-row.is-head + .orbit-access-row { border-top: 0; }
+.orbit-access-row:not(.is-head):hover { background: rgb(var(--o-glass) / .04); }
+.orbit-access-row.is-head { padding-block: 10px; font-size: 11.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: rgb(var(--o-mute)); }
+.orbit-access-row.is-head span { display: inline-flex; align-items: center; gap: 6px; }
+.orbit-access-name { display: grid; gap: 2px; min-width: 0; }
+.orbit-access-name b { font-size: 14.5px; color: rgb(var(--o-ink)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.orbit-access-name small { font-size: 12px; color: rgb(var(--o-mute)); }
+.orbit-access-row.is-hidden .orbit-access-name { opacity: .6; }
+.orbit-access-cell { display: flex; align-items: center; gap: 10px; }
+.orbit-access-cell em { display: none; font-style: normal; font-size: 13px; color: rgb(var(--o-ink)); }
+.orbit-access-cell.is-off .dn-switch { opacity: .35; cursor: not-allowed; }
+.orbit-access-cell.is-saving .dn-switch { animation: orbit-access-pulse .8s ease infinite alternate; }
+@keyframes orbit-access-pulse { to { opacity: .55; } }
+.orbit-access-empty { margin: 0; padding: 22px 20px; font-size: 13.5px; color: rgb(var(--o-mute)); }
+
+@media (max-width: 760px) {
+  .orbit-access-head .orbit-search, .orbit-access-head .orbit-search input { width: 100%; }
+  .orbit-access-head .orbit-search { flex: 1 1 100%; }
+  .orbit-access-row.is-head { display: none; }
+  .orbit-access-row { grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 16px; }
+  .orbit-access-row.is-head + .orbit-access-row { border-top: 0; }
+  .orbit-access-cell { justify-content: space-between; }
+  .orbit-access-cell em { display: inline; }
+}
+
+/* ── Quota de questions (Paramètres, super admin) ── */
+.orbit-quota p { margin: 0 0 12px; font-size: 13px; color: rgb(var(--o-mute)); }
+.orbit-quota-field { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.orbit-quota-field input { width: 72px; height: 38px; border-radius: 12px; text-align: center; font: 700 16px var(--font-ui-safe); color: rgb(var(--o-ink)); background: rgb(var(--o-glass) / .06); border: 1px solid rgb(var(--o-glass) / .14); outline: 0; }
+.orbit-quota-field input:focus { border-color: rgb(var(--o-acc) / .6); }
+.orbit-quota-field > span { font-size: 13px; color: rgb(var(--o-mute)); margin-right: 8px; }
+.orbit-quota-step { width: 34px; height: 34px; border-radius: 50%; font: 600 17px var(--font-ui-safe); color: rgb(var(--o-ink)); background: rgb(var(--o-glass) / .06); border: 1px solid rgb(var(--o-glass) / .12); transition: background-color .2s ease; }
+.orbit-quota-step:hover { background: rgb(var(--o-glass) / .12); }
+
+/* ── Carte Commentaire : deux actions côte à côte ── */
+.orbit-comment-actions { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.orbit-ask-open svg { color: rgb(var(--o-acc)); }
+
+/* ── Questionner la campagne ── */
+.orbit-ask-backdrop { align-items: center; padding-top: 16px; }
+.orbit-ask { width: min(680px, 100%); height: min(720px, calc(100dvh - 32px)); display: grid; grid-template-rows: auto minmax(0, 1fr) auto auto; overflow: hidden; border-radius: 26px; background: linear-gradient(160deg, rgb(var(--o-deep2) / .97), rgb(var(--o-deep1) / .99)); border: 1px solid rgb(var(--o-glass) / .16); box-shadow: inset 0 1px 0 rgb(var(--o-glass) / .08), 0 40px 100px rgb(var(--o-shade) / .5); animation: orbit-panel-in .32s cubic-bezier(.22, 1, .36, 1) both; }
+.orbit-ask-head { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid rgb(var(--o-glass) / .1); }
+.orbit-ask-head > div { flex: 1; min-width: 0; }
+.orbit-ask-head h2 { margin: 0; font: 700 17px var(--font-display-safe); color: rgb(var(--o-ink)); }
+.orbit-ask-head small { display: block; font-size: 12.5px; color: rgb(var(--o-mute)); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.orbit-ask-mark { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 12px; color: rgb(var(--o-acc)); background: rgb(var(--o-acc) / .14); }
+.orbit-ask-thread { overflow-y: auto; padding: 18px; display: grid; align-content: start; gap: 18px; }
+.orbit-ask-intro p { margin: 0 0 14px; font-size: 14px; line-height: 1.55; color: rgb(var(--o-mute)); }
+.orbit-ask-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.orbit-ask-chips button { padding: 8px 13px; border-radius: 999px; font-size: 13px; color: rgb(var(--o-ink)); background: rgb(var(--o-glass) / .06); border: 1px solid rgb(var(--o-glass) / .12); transition: background-color .2s ease, border-color .2s ease; }
+.orbit-ask-chips button:hover { background: rgb(var(--o-acc) / .12); border-color: rgb(var(--o-acc) / .4); }
+.orbit-ask-turn { display: grid; gap: 10px; animation: orbit-fade-in .3s ease both; }
+.orbit-ask-q { justify-self: end; max-width: 85%; margin: 0; padding: 10px 14px; border-radius: 18px 18px 6px 18px; font-size: 14px; color: rgb(var(--o-ink)); background: rgb(var(--o-acc) / .18); }
+.orbit-ask-a { max-width: 92%; padding: 12px 15px; border-radius: 18px 18px 18px 6px; background: rgb(var(--o-glass) / .06); border: 1px solid rgb(var(--o-glass) / .1); }
+.orbit-ask-a p { margin: 0 0 6px; font-size: 14px; line-height: 1.55; color: rgb(var(--o-ink)); }
+.orbit-ask-a p:last-child { margin-bottom: 0; }
+.orbit-ask-a.is-thinking { display: inline-flex; gap: 5px; width: max-content; }
+.orbit-ask-a.is-thinking span { width: 7px; height: 7px; border-radius: 50%; background: rgb(var(--o-acc)); animation: orbit-ask-dot 1s ease-in-out infinite; }
+.orbit-ask-a.is-thinking span:nth-child(2) { animation-delay: .15s; }
+.orbit-ask-a.is-thinking span:nth-child(3) { animation-delay: .3s; }
+@keyframes orbit-ask-dot { 0%, 100% { opacity: .3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
+.orbit-ask-error { margin: 0; padding: 10px 14px; border-radius: 14px; font-size: 13px; color: rgb(var(--o-ink)); background: rgb(var(--o-warn, 255 160 120) / .14); }
+.orbit-ask-form { display: flex; align-items: flex-end; gap: 10px; margin: 0 14px; padding: 8px 8px 8px 16px; border-radius: 20px; background: rgb(var(--o-glass) / .06); border: 1px solid rgb(var(--o-glass) / .14); transition: border-color .2s ease; }
+.orbit-ask-form:focus-within { border-color: rgb(var(--o-acc) / .55); }
+.orbit-ask-form textarea { flex: 1; min-width: 0; max-height: 120px; padding: 8px 0; resize: none; border: 0; outline: 0; background: transparent; font: 500 14.5px var(--font-ui-safe); color: rgb(var(--o-ink)); field-sizing: content; }
+.orbit-ask-form textarea::placeholder { color: rgb(var(--o-mute)); }
+.orbit-ask-send { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 50%; color: #fff; background: rgb(var(--o-acc)); transition: opacity .2s ease, transform .2s ease; }
+.orbit-ask-send:disabled { opacity: .35; }
+.orbit-ask-send:not(:disabled):hover { transform: translateY(-1px); }
+.orbit-ask-foot { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 18px 14px; font-size: 11.5px; color: rgb(var(--o-mute)); }
+.orbit-ask-foot b { font-weight: 600; color: rgb(var(--o-ink)); }
+@media (max-width: 760px) {
+  .orbit-ask-backdrop { padding: 0; align-items: end; }
+  .orbit-ask { height: min(88dvh, 720px); border-radius: 26px 26px 0 0; }
+}

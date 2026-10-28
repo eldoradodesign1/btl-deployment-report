@@ -1,6 +1,6 @@
 // Commentaire de la période : quitte le filtre et devient une carte de lecture à côté de la progression.
 // Semaine exacte → commentaire hebdomadaire (modifiable par BTL) ; autre sélection → synthèse de période (locale).
-import { MessageSquareText, Sparkles } from "lucide-react";
+import { MessageSquareText, MessagesSquare, Sparkles } from "lucide-react";
 
 type Props = {
   weekNumber: number | null;
@@ -9,9 +9,10 @@ type Props = {
   role: "btl" | "vodacom";
   onWeeklyCommentOpen?: (week: number, comment: string) => void;
   onCustomPeriodCommentOpen?: () => void;
+  onAsk?: () => void;
 };
 
-export function PeriodComment({ weekNumber, weeklyComment, customPeriodComment, role, onWeeklyCommentOpen, onCustomPeriodCommentOpen }: Props) {
+export function PeriodComment({ weekNumber, weeklyComment, customPeriodComment, role, onWeeklyCommentOpen, onCustomPeriodCommentOpen, onAsk }: Props) {
   const weekly = weekNumber !== null;
   const comment = weekly ? weeklyComment : customPeriodComment;
   const action = weekly
@@ -21,7 +22,7 @@ export function PeriodComment({ weekNumber, weeklyComment, customPeriodComment, 
     <article className="orbit-comment-card glass-card">
       <div className="orbit-comment-head">
         <div><span className="eyebrow">{weekly ? `Semaine ${weekNumber}` : "Période choisie"}</span><h3>Commentaire de la période</h3></div>
-        {action && <button type="button" className="orbit-ghost" onClick={action.run}>{comment ? <MessageSquareText size={14} /> : <Sparkles size={14} />}{action.label}</button>}
+        <div className="orbit-comment-actions">{action && <button type="button" className="orbit-ghost" onClick={action.run}>{comment ? <MessageSquareText size={14} /> : <Sparkles size={14} />}{action.label}</button>}{onAsk && <button type="button" className="orbit-ghost orbit-ask-open" onClick={onAsk} title="Poser une question sur cette période"><MessagesSquare size={14} />Questionner</button>}</div>
       </div>
       {comment ? <p>{comment}</p> : <p className="orbit-comment-empty">{weekly ? "Pas encore de commentaire pour cette semaine." : "Pas encore de synthèse pour cette sélection."}</p>}
       {!weekly && comment && <small className="orbit-comment-note">Synthèse enregistrée sur cet appareil.</small>}
