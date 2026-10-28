@@ -9,7 +9,7 @@ import type { Activation } from "@/data/vodacomData";
 import { exportExactSynthesisWorkbook } from "@/lib/excelReport";
 import AnimatedNumber from "@/components/AnimatedNumber";
 import DateRangeFilter from "@/components/DateRangeFilter";
-import { campaignTerms } from "@/lib/campaigns";
+import { campaignTerms, type CampaignType } from "@/lib/campaigns";
 import ReportExportV2 from "@/components/ReportExportV2";
 
 type ReportProps = {
@@ -193,7 +193,7 @@ function ClassicReportExport({ data, filtered, fullDaily, targetDaily, fullTarge
   const previousRangeRef = useRef(rangeKey);
   const [showSelectionCallout, setShowSelectionCallout] = useState(false);
   const merchant = typeof document !== "undefined" && document.documentElement.dataset.campaignType === "brand_ambassador";
-  const terms = campaignTerms(merchant ? "brand_ambassador" : "hostess");
+  const terms = campaignTerms((typeof document !== "undefined" ? document.documentElement.dataset.campaignType : "hostess") as CampaignType);
   const report = buildReport(filtered, fullDaily, targetDaily, fullTargetDaily, merchant);
   const reportTitle = merchant ? "RAPPORT D’ACTIVITÉ — MERCHANT EDUCATIONAL CAMPAIGN" : "RAPPORT D’ACTIVITÉ — CAMPAGNE VODACOM PRIVILÈGE";
   const reportMovement = merchant ? "Les transactions sur toute la campagne." : "Le mouvement sur toute la campagne.";

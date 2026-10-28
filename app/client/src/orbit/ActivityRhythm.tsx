@@ -12,7 +12,8 @@ const DAY_NAMES = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"];
 const number = (value: number) => new Intl.NumberFormat("fr-FR").format(value);
 
 export function ActivityRhythm({ filtered, allData, dailyComments, weeklyComments, merchant }: Props) {
-  const record = merchant ? "transactions" : "activations"; const participants = merchant ? "ambassadeurs" : "agents"; const locations = merchant ? "points de vente" : "shops";
+  const contact = typeof document !== "undefined" && document.documentElement.dataset.campaignType === "contact";
+  const record = merchant ? "transactions" : contact ? "contacts" : "activations"; const participants = merchant || contact ? "ambassadeurs" : "agents"; const locations = merchant ? "points de vente" : contact ? "lieux" : "shops";
   const byDate = useMemo(() => { const groups = new Map<string, Activation[]>(); filtered.forEach((item) => groups.set(item.d, [...(groups.get(item.d) ?? []), item])); return groups; }, [filtered]);
   const dates = useMemo(() => Array.from(byDate.keys()).sort(), [byDate]);
   const weekNumbers = useMemo(() => new Map(getWeekRanges(allData).map((week, index) => [week.key, { index: index + 1, start: week.start, end: week.end }])), [allData]);
@@ -32,7 +33,7 @@ export function ActivityRhythm({ filtered, allData, dailyComments, weeklyComment
   const rows = byDate.get(day)!; const monday = mondayOf(day); const week = weekNumbers.get(monday);
   const present = new Set(rows.map((item) => item.a)).size; const totalAgents = new Set(filtered.map((item) => item.a)).size;
   const shops = Array.from(rows.reduce((counts, item) => counts.set(item.s, (counts.get(item.s) ?? 0) + 1), new Map<string, number>())).sort((a, b) => b[1] - a[1]);
-  const optIn = rows.filter((item) => item.t === ACTIONS[0]).length;
+  const optIn = rows.filter((item) => item.t === ACTIONS[0] || item.t === "Contact avec transaction").length;
   const dailyNote = dailyComments[day]?.trim();
   const weeklyNote = (week && weeklyComments[`${week.start}|${week.end}`]) || Object.entries(weeklyComments).find(([key]) => mondayOf(key.split("|")[0]) === monday)?.[1];
   const weekTotal = week ? filtered.filter((item) => item.d >= week.start && item.d <= week.end).length : 0;
@@ -50,7 +51,7 @@ export function ActivityRhythm({ filtered, allData, dailyComments, weeklyComment
     </section>
     <aside ref={dayRef} className="glass-card at-card at-day" aria-label="Fiche du jour" key={day}>
       <div className="at-row"><div><h3>{dayTitle(day)}</h3><span className="at-sub">{week ? `Semaine ${week.index}` : "Hors semaine"}{day === best ? " · meilleur jour" : ""}</span></div><span className="at-sp" /><span className="at-figure">{number(rows.length)}</span></div>
-      <div className="at-facts"><span><b>{present}</b> / {totalAgents} {participants}</span><span><b>{shops.length}</b> {locations}</span>{!merchant && <span><b>{optIn}</b> opt-in</span>}</div>
+      <div className="at-facts"><span><b>{present}</b> / {totalAgents} {participants}</span><span><b>{shops.length}</b> {locations}</span>{!merchant && <span><b>{optIn}</b> {contact ? "avec transaction" : "opt-in"}</span>}</div>
       <div className="at-bars">{shops.slice(0, 8).map(([name, value]) => <div className="at-bar-row" key={name}><span className="at-bar-name" title={name}>{name}</span><span className="at-minibar"><i style={{ width: `${(value / shops[0][1]) * 100}%` }} /></span><b>{value}</b></div>)}{shops.length > 8 && <span className="at-sub">+ {shops.length - 8} autres {locations}</span>}</div>
       <div className="at-inner"><div className="at-row"><span className="at-tag"><MessageSquareText size={13} />Note du jour</span><span className="at-sp" /><span className="at-sub">Supervision</span></div><p className={dailyNote ? "" : "is-empty"}>{dailyNote || "Aucune note de supervision pour ce jour."}</p></div>
       <div className="at-inner"><div className="at-row"><span className="at-tag"><MessageSquareText size={13} />Note de la semaine</span>{week && <><span className="at-sp" /><span className="at-sub">{number(weekTotal)} {record}</span></>}</div><p className={weeklyNote ? "" : "is-empty"}>{weeklyNote?.trim() || "Aucune note pour cette semaine."}</p></div>

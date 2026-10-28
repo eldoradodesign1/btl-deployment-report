@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight, Download, FileSpreadsheet, FileText, LoaderC
 import { jsPDF } from "jspdf";
 import html2canvas from "html2canvas";
 import type { Activation } from "@/data/vodacomData";
-import { campaignTerms } from "@/lib/campaigns";
+import { campaignTerms, type CampaignType } from "@/lib/campaigns";
 import { exportReportWorkbookV2, periodDays, type ExportSections } from "@/lib/excelReportV2";
 import { PeriodPicker } from "@/orbit/PeriodPicker";
 import { OrbitIcon } from "@/orbit/OrbitIcon";
@@ -143,7 +143,7 @@ function PageSheet({ kind, index, count, ctx }: { kind: PageKind; index: number;
 
 export default function ReportExportV2({ data, filtered, fullTargetDaily, startDate, endDate, rangeLabel, formatNumber, formatDate, weeklyComment = "", customPeriodComment = "", onPeriodChange, onClose, onUseClassic }: ReportExportV2Props) {
   const merchant = typeof document !== "undefined" && document.documentElement.dataset.campaignType === "brand_ambassador";
-  const terms = campaignTerms(merchant ? "brand_ambassador" : "hostess");
+  const terms = campaignTerms((typeof document !== "undefined" ? document.documentElement.dataset.campaignType : "hostess") as CampaignType);
   const participantsLabel = merchant ? terms.participants : "Hôtesses";
   const title = merchant ? "RAPPORT D’ACTIVITÉ — MERCHANT EDUCATIONAL CAMPAIGN" : "RAPPORT D’ACTIVITÉ — CAMPAGNE VODACOM PRIVILÈGE";
   const comment = (weeklyComment || customPeriodComment).trim();
