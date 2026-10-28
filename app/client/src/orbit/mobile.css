@@ -1,0 +1,111 @@
+/* Orbit, téléphone (≤ 760 px) : le parcours de la maquette « Le même parcours sur téléphone ».
+   En-tête (icône, campagne, cloche) et pastille de période dessous ; accueil en carte signature puis
+   deux cartes compactes ; Terrain en liste de cartes ; feuille de période d'un mois. Chargé en dernier. */
+
+.orbit-mtop, .orbit-mcard-title, .orbit-period-sheet-head { display: none; }
+
+@media (max-width: 760px) {
+  /* ── En-tête : une ligne d'identité, la période dessous ─────────────── */
+  .app-shell .topbar { flex-wrap: wrap; align-items: center; row-gap: 8px; height: auto !important; min-height: 0 !important; padding: 10px 52px 8px 14px !important; }
+  .app-shell .topbar .topbar-tools { display: contents; }
+  .app-shell .topbar .orbit-period { order: 5; flex: 1 0 100%; display: flex; }
+  .app-shell .topbar .orbit-period-pill { min-height: 34px; }
+  .app-shell .topbar > .breadcrumb { order: 1; }
+  .app-shell .topbar > .breadcrumb strong { font-size: 19px; }
+  .app-shell .topbar .notification-wrap, .app-shell .topbar .orbit-mtop-search { order: 2; flex: none; }
+  .app-shell .topbar:has(.orbit-mtop) > .breadcrumb { display: none !important; }
+
+  .orbit-mtop { order: 1; position: relative; flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 9px; }
+  .orbit-mtop-icon { flex: none; width: 28px; height: 28px; border-radius: 8px; }
+  .orbit-mtop-campaign { display: inline-flex; align-items: center; gap: 4px; min-width: 0; min-height: 40px; font: 700 16px var(--font-display-safe); letter-spacing: -.01em; color: rgb(var(--o-ink)); }
+  .orbit-mtop-campaign b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: inherit; }
+  .orbit-mtop-campaign svg { flex: none; color: rgb(var(--o-mute)); transition: transform .3s cubic-bezier(.22, 1, .36, 1); }
+  .orbit-mtop-campaign[aria-expanded="true"] svg { transform: rotate(180deg); }
+  .orbit-mtop .orbit-mtop-menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 120; width: min(300px, calc(100vw - 28px)); animation: orbit-pop-in .3s cubic-bezier(.22, 1, .36, 1) both; transform-origin: top left; }
+  .orbit-mtop-search.is-open { color: rgb(var(--o-acc)); border-color: rgb(var(--o-acc) / .6); }
+
+  /* ── Accueil : carte signature, puis Progression et Jours prestés ───── */
+  .app-shell .orbit-hero { min-height: 196px; margin: 4px 0 10px; padding: 18px 16px 16px; gap: 10px; border-radius: 22px; }
+  .app-shell .orbit-hero-figure { gap: 4px 8px; }
+  .app-shell .orbit-hero-figure strong { font-size: 44px; }
+  .app-shell .orbit-hero-figure > span { font-size: 15px; }
+  .app-shell .orbit-hero-figure em, .orbit-hero-share { display: none; }
+  .app-shell .orbit-hero-bar { height: 8px; }
+  .app-shell .orbit-hero-facts { flex-wrap: nowrap; font-size: 12.5px; }
+  .app-shell .orbit-hero-facts span { padding: 0 10px; white-space: nowrap; }
+  .app-shell .orbit-hero-facts span:first-child { padding-left: 0; }
+  .app-shell .orbit-hero-facts span:nth-child(n + 4) { display: none; }
+  .app-shell .orbit-hero-facts b { font-size: 14px; }
+
+  .app-shell .dashboard-content { display: flex; flex-direction: column; gap: 10px; }
+  .app-shell .dashboard-content > .orbit-dash-row { display: contents; }
+  .app-shell .dashboard-content > .orbit-dash-row > .progression-card { order: 1; }
+  .app-shell .dashboard-content > .signal-layout { order: 2; display: block; margin: 0; }
+  .app-shell .dashboard-content > .orbit-dash-row > :not(.progression-card) { order: 3; }
+  .app-shell .dashboard-content > .lower-grid { display: none; }
+
+  .app-shell .dashboard-content .progression-card, .app-shell .dashboard-content .signal-layout .chart-card { height: auto !important; min-height: 0 !important; padding: 14px !important; border-radius: 20px; }
+  .app-shell .dashboard-content :is(.progression-card, .chart-card) .card-heading { display: flex; align-items: center; gap: 8px; margin: 0; min-height: 0; }
+  .app-shell .dashboard-content :is(.progression-card, .chart-card) .card-heading h3,
+  .app-shell .dashboard-content .progression-card .progression-meta,
+  .app-shell .dashboard-content .chart-card .card-heading .eyebrow { display: none !important; }
+  /* « Progression campagne » devient le titre court de la carte */
+  .app-shell .dashboard-content .progression-card .card-heading .eyebrow { font-size: 0 !important; letter-spacing: 0 !important; margin: 0; }
+  .app-shell .dashboard-content .progression-card .card-heading .eyebrow::before { content: "Progression"; font: 700 15px var(--font-display-safe); letter-spacing: -.01em; text-transform: none; color: rgb(var(--o-ink)); }
+  .app-shell .dashboard-content .orbit-mcard-title { display: block; margin: 0; font: 700 15px var(--font-display-safe); letter-spacing: -.01em; color: rgb(var(--o-ink)); }
+  .app-shell .dashboard-content .progression-wrap { height: 130px; margin-top: 8px; }
+  .app-shell .dashboard-content .progression-footer { display: none !important; }
+  .app-shell .dashboard-content .chart-card .chart-legend { margin-left: auto; display: flex; flex-wrap: nowrap; gap: 6px; font-size: 0 !important; }
+  .app-shell .dashboard-content .chart-card .chart-legend > :not(.orbit-best-day) { display: none !important; }
+  .app-shell .dashboard-content .chart-card .orbit-best-day { font-size: 12px; white-space: nowrap; }
+  .app-shell .dashboard-content .bar-chart { height: 112px !important; min-height: 0 !important; margin-top: 10px !important; grid-template-columns: minmax(0, 1fr) !important; }
+  .app-shell .dashboard-content .bar-chart .y-axis, .app-shell .dashboard-content .bar-chart .bar-value, .app-shell .dashboard-content .bar-chart .bar-column > span { display: none !important; }
+  .app-shell .dashboard-content .bar-chart .chart-body { gap: 2px !important; padding: 0 !important; }
+
+  /* ── Terrain : Agents / Shops pleine largeur, liste en cartes ───────── */
+  .orbit-terrain .orbit-toolbar { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; margin: 2px 0 10px; }
+  .orbit-terrain .orbit-seg { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+  .orbit-terrain .orbit-seg button { justify-content: center; min-height: 40px; }
+  .app-shell:not(.is-terrain-search) .orbit-terrain .orbit-search:not(:has(input:not(:placeholder-shown))) { display: none; }
+  .orbit-terrain .orbit-search { order: -1; animation: orbit-fade-in .3s ease both; }
+
+  .app-shell .orbit-terrain .orbit-table-card { padding: 4px 14px; border-radius: 20px; }
+  .orbit-terrain .orbit-table, .orbit-terrain .orbit-table tbody { display: block; }
+  .orbit-terrain .orbit-table thead { display: none; }
+  .orbit-terrain .orbit-table tbody tr { display: grid; grid-template-columns: 26px auto minmax(0, 1fr) auto; grid-template-rows: auto auto; align-items: center; column-gap: 10px; row-gap: 3px; padding: 10px 0; border-top: 1px solid rgb(var(--o-glass) / .08); }
+  .orbit-terrain .orbit-table tbody tr:first-child { border-top: 0; }
+  .orbit-terrain .orbit-table td { display: block; padding: 0; border: 0 !important; width: auto; }
+  .orbit-terrain .orbit-table td.c { grid-column: 1; grid-row: 1 / span 2; }
+  .orbit-terrain .orbit-table td:nth-child(2) { grid-column: 2 / 4; grid-row: 1; min-width: 0; }
+  .orbit-terrain .orbit-table td:nth-child(2) strong { font-size: 13.5px; overflow-wrap: anywhere; }
+  .orbit-terrain .orbit-table td.num { grid-column: 2; grid-row: 2; text-align: left; font: 500 12px var(--font-ui-safe); color: rgb(var(--o-mute)); white-space: nowrap; }
+  .orbit-terrain .orbit-table td.num::after { content: " activations"; }
+  html[data-campaign-type="brand_ambassador"] .orbit-terrain .orbit-table td.num::after { content: " transactions"; }
+  .orbit-terrain .orbit-table td.orbit-trend { display: block; grid-column: 3; grid-row: 2; width: 60px; }
+  .orbit-terrain .orbit-trend .sparkline-wrap { min-width: 0; width: 60px; height: 16px; }
+  .orbit-terrain .orbit-trend .sparkline { height: 16px; }
+  .orbit-terrain .orbit-trend .sparkline :is(circle, .sparkline-target) { display: none; }
+  .orbit-terrain .orbit-table td.orbit-share { grid-column: 4; grid-row: 1 / span 2; font-size: 14px; }
+  .orbit-terrain .orbit-rank { width: 24px; height: 24px; border-radius: 8px; }
+
+  /* ── Feuille de période : semaines en pastilles, un mois, Du / Au ──── */
+  .app-shell .orbit-period-panel { gap: 12px; padding-top: 10px !important; }
+  .orbit-period-sheet-head { display: grid; grid-template-columns: 1fr auto; align-items: center; row-gap: 8px; }
+  .orbit-period-handle { grid-column: 1 / -1; justify-self: center; width: 44px; height: 5px; border-radius: 9px; background: rgb(var(--o-glass) / .22); }
+  .orbit-period-sheet-head h4 { margin: 0; font: 700 16px var(--font-display-safe); color: rgb(var(--o-ink)); }
+  .orbit-period-weeks { gap: 6px; padding-bottom: 2px; scrollbar-width: none; }
+  .orbit-period-weeks::-webkit-scrollbar { display: none; }
+  .orbit-period-weeks button { padding: 7px 11px; border-radius: 14px; background: rgb(var(--o-glass) / .05); border-color: rgb(var(--o-glass) / .1); font-size: 12px; color: rgb(var(--o-mute)); }
+  .orbit-period-weeks button.is-active { color: rgb(var(--o-onacc)); background: linear-gradient(180deg, rgb(var(--o-acc)), rgb(var(--o-acc) / .8)); border-color: transparent; }
+  .orbit-period-weeks button.is-active b { color: inherit; }
+  /* « Tout » montre le total, les semaines leurs dates */
+  .orbit-period-weeks button:first-of-type span { display: none; }
+  .orbit-period-weeks button:first-of-type small { display: block; font: 500 12px var(--font-ui-safe); color: inherit; }
+  .orbit-period-months { gap: 8px; }
+  .orbit-period-range, .orbit-period-foot .orbit-link { display: none !important; }
+  .orbit-period-dates { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .orbit-period-dates span { display: grid; gap: 1px; min-width: 0; padding: 8px 12px; border-radius: 12px; background: rgb(var(--o-glass) / .05); border: 1px solid rgb(var(--o-glass) / .12); font-size: 12px; text-transform: capitalize; }
+  .orbit-period-dates b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13.5px; text-transform: none; }
+  .orbit-period-foot { padding: 0; }
+  .orbit-period-foot .orbit-primary { width: 100%; justify-content: center; min-height: 46px; }
+}
