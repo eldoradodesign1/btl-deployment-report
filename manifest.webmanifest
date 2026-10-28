@@ -1,10 +1,14 @@
 {
+  "id": "./",
   "name": "BTL - Deployment report",
   "short_name": "BTL Report",
   "description": "Pilotage des activations terrain Vodacom Privilège.",
   "start_url": "./",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone"],
+  "display_override": [
+    "window-controls-overlay",
+    "standalone"
+  ],
   "background_color": "#080e1c",
   "theme_color": "#090e1b",
   "icons": [
@@ -19,6 +23,17 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "scope": "./",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  },
+  "handle_links": "preferred",
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://eldoradodesign1.github.io/btl-deployment-report/manifest.webmanifest"
     }
   ]
 }
