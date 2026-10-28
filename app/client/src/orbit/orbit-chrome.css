@@ -55,3 +55,17 @@
   .app-shell .topbar .sync-state, .app-shell .topbar .export-top-button, .app-shell .topbar .help-wrap { display: none !important; }
   .orbit-hero-facts { font-size: 13px; }
 }
+
+/* ── Sélecteur de campagne : une carte sous la marque, comme dans la maquette ── */
+.app-shell .sidebar .sidebar-context { display: block !important; margin: 0 2px 8px !important; padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; font: inherit !important; letter-spacing: 0 !important; }
+.app-shell .sidebar .sidebar-context > :not(.campaign-selector-wrap) { display: none !important; }
+.app-shell .sidebar .campaign-selector-trigger { min-height: 56px !important; gap: 10px !important; padding: 10px 12px !important; border-radius: 16px !important; text-align: left; background: rgb(var(--o-glass) / .05) !important; border: 1px solid rgb(var(--o-glass) / .12) !important; transition: border-color .25s ease, background-color .25s ease; }
+.app-shell .sidebar .campaign-selector-trigger:hover, .app-shell .sidebar .campaign-selector-trigger.is-open { border-color: rgb(var(--o-acc) / .45) !important; }
+.app-shell .sidebar .campaign-selector-trigger > span:not(.campaign-selector-dot) { display: grid; min-width: 0; flex: 1; }
+.app-shell .sidebar .campaign-selector-trigger b { font: 700 13.5px var(--font-ui-safe) !important; color: rgb(var(--o-ink)) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-shell .sidebar .campaign-selector-trigger small { font: 500 12px var(--font-ui-safe) !important; letter-spacing: 0 !important; color: rgb(var(--o-mute)) !important; }
+.app-shell .sidebar .campaign-selector-trigger svg { color: rgb(var(--o-mute)); flex: none; transition: transform .3s cubic-bezier(.22, 1, .36, 1); }
+.app-shell .sidebar .campaign-selector-trigger.is-open svg { transform: rotate(180deg); }
+.app-shell .campaign-selector-dot { width: 9px !important; height: 9px !important; flex: none; background: rgb(var(--o-point)) !important; box-shadow: 0 0 10px rgb(var(--o-point)) !important; }
+.app-shell .sidebar .campaign-selector-menu { border-radius: 16px !important; animation: orbit-pop-in .3s cubic-bezier(.22, 1, .36, 1) both; transform-origin: top center; }
+.app-shell .sidebar .campaign-selector-menu.glass-card::before { background: linear-gradient(160deg, rgb(var(--o-deep2) / .94), rgb(var(--o-deep1) / .98)) !important; opacity: 1 !important; }
