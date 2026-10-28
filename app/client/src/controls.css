@@ -1,5 +1,5 @@
 /* Design philosophy: Halo Opaline — every control is a luminous instrument with one material language. */
-* { scrollbar-width: thin; scrollbar-color: rgba(139,232,229,.42) rgba(6,12,24,.7); }
+* { scrollbar-width: thin; scrollbar-color: rgb(var(--o-acc) / 0.42) rgb(var(--o-deep0) / 0.7); }
 *::-webkit-scrollbar { width: 8px; height: 8px; }
 *::-webkit-scrollbar-track { background: rgb(var(--o-deep0) / 0.72); }
 *::-webkit-scrollbar-thumb { background: linear-gradient(180deg, rgb(var(--o-acc) / 0.7), rgb(var(--o-blue) / 0.55)); border: 2px solid rgb(var(--o-deep0) / 0.72); border-radius: 99px; }
