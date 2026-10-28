@@ -94,3 +94,19 @@
 .orbit-palette-foot { display: flex; flex-wrap: wrap; gap: 16px; padding: 10px 18px; border-top: 1px solid rgb(var(--o-glass) / .1); font-size: 12px; color: rgb(var(--o-mute)); }
 .orbit-palette-foot kbd { margin-right: 3px; }
 @media (max-width: 760px) { .orbit-palette-backdrop { padding-top: 8vh; } .orbit-palette-foot { display: none; } }
+
+/* ── Signature claire : Starfly et Aube ont leur propre image du hero (générée à partir de l'originale) ── */
+:is([data-ambiance="starfly"], [data-ambiance="aube"]) .orbit-signature { filter: none; mix-blend-mode: normal; opacity: .55; }
+[data-ambiance="starfly"] .orbit-signature { background-image: var(--signature-starfly); }
+[data-ambiance="aube"] .orbit-signature { background-image: var(--signature-aube); }
+:is([data-ambiance="starfly"], [data-ambiance="aube"]) .orbit-hero { color: rgb(var(--o-ink)); background: rgb(var(--o-deep1)); --o-hero-filter: none; }
+[data-ambiance="starfly"] .orbit-hero::before { background-image: var(--hero-starfly); }
+[data-ambiance="aube"] .orbit-hero::before { background-image: var(--hero-aube); }
+:is([data-ambiance="starfly"], [data-ambiance="aube"]) .orbit-hero::after { background: linear-gradient(90deg, rgb(var(--o-deep1) / .94) 0%, rgb(var(--o-deep1) / .72) 40%, rgb(var(--o-deep1) / 0) 78%); }
+:is([data-ambiance="starfly"], [data-ambiance="aube"]) .orbit-hero-eyebrow { color: rgb(var(--o-acc)); }
+:is([data-ambiance="starfly"], [data-ambiance="aube"]) .orbit-hero-figure > span, :is([data-ambiance="starfly"], [data-ambiance="aube"]) .orbit-hero-facts { color: rgb(var(--o-ink2)); }
+:is([data-ambiance="starfly"], [data-ambiance="aube"]) .orbit-hero-facts b { color: rgb(var(--o-ink)); }
+:is([data-ambiance="starfly"], [data-ambiance="aube"]) .orbit-hero-facts span { border-left-color: rgb(var(--o-glass) / .2); }
+:is([data-ambiance="starfly"], [data-ambiance="aube"]) .orbit-hero-bar { background: rgb(var(--o-glass) / .12); }
+:is([data-ambiance="starfly"], [data-ambiance="aube"]) .orbit-hero-figure em { color: rgb(var(--o-coral)); border-color: rgb(var(--o-coral) / .4); background: rgb(var(--o-coral) / .08); }
+@media (max-width: 760px) { :is([data-ambiance="starfly"], [data-ambiance="aube"]) .orbit-hero::after { background: linear-gradient(0deg, rgb(var(--o-deep1) / .94) 0%, rgb(var(--o-deep1) / .6) 60%, rgb(var(--o-deep1) / .1) 100%); } }

@@ -17,7 +17,7 @@ export function OrbitSky({ context = "dashboard" }: { context?: string }) {
   return (
     <div className="orbit-sky" data-context={context} aria-hidden="true">
       <div className="orbit-sky-base" />
-      <div className="orbit-signature" style={{ "--signature": `url(${heroUrl})` } as CSSProperties} />
+      <div className="orbit-signature" style={{ "--signature": `url(${heroUrl})`, "--signature-starfly": `url(${import.meta.env.BASE_URL}assets/hero-starfly.png)`, "--signature-aube": `url(${import.meta.env.BASE_URL}assets/hero-aube.png)` } as CSSProperties} />
       <div className="orbit-curtains">
         {CURTAINS.map(([x, w, tone, dur, delay], index) => (
           <span key={index} className={`orbit-curtain tone-${tone}`} style={{ "--x": `${x}%`, "--w": `${w}px`, "--dur": `${dur}s`, "--delay": `-${delay}s` } as CSSProperties} />
