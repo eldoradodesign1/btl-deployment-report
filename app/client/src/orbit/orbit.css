@@ -154,7 +154,7 @@ html ::selection { background: rgb(var(--o-acc) / .3); }
 /* ── Barre latérale ───────────────────────────────────────────────────── */
 @media (min-width: 761px) {
   .app-shell .sidebar { inset: 12px auto 12px 12px !important; width: 252px !important; min-width: 252px !important; height: auto !important; border: 1px solid rgb(var(--o-glass) / .11) !important; border-radius: 24px; padding: 18px 12px 12px !important; }
-  .app-shell .main-stage { width: calc(100% - 276px) !important; margin-left: 276px !important; padding: 0 22px 40px 6px !important; }
+  .app-shell .main-stage { width: calc(100% - 276px) !important; margin-left: 276px !important; padding: 0 22px 40px 6px !important; overflow-x: hidden !important; }
 }
 .sidebar .brand-lockup { padding: 0 8px 16px !important; gap: 10px !important; }
 .sidebar .brand-mark { width: 38px !important; height: 38px !important; border-radius: 11px !important; border: 0 !important; background: none !important; box-shadow: 0 6px 18px rgb(var(--o-aur2) / .3) !important; overflow: hidden; }
