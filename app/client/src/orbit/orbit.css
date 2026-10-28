@@ -99,7 +99,7 @@ html ::selection { background: rgb(var(--o-acc) / .3); }
 [data-ambiance="starfly"] .orbit-streaks { display: block; }
 .orbit-streak { position: absolute; top: calc(6% + var(--i) * 13%); left: calc(30% + var(--i) * 17%); width: 180px; height: 2px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgb(var(--o-point) / .9)); transform: rotate(-24deg); opacity: 0; animation: orbit-streak 9s ease-in calc(var(--i) * 2.3s) infinite; }
 .orbit-streak::after { content: ""; position: absolute; right: -3px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: rgb(var(--o-point)); box-shadow: 0 0 12px rgb(var(--o-point)); }
-@keyframes orbit-streak { 0%, 72% { opacity: 0; transform: rotate(-24deg) translateX(0); } 76% { opacity: 1; } 100% { opacity: 0; transform: rotate(-24deg) translateX(-38vw); } }
+@keyframes orbit-streak { 0%, 72% { opacity: 0; transform: rotate(-24deg) translateX(0); } 76% { opacity: 1; } 100% { opacity: 0; transform: rotate(-24deg) translateX(38vw); } }
 /* Phénomènes : pulsar et trou noir */
 .orbit-phenomenon { position: absolute; left: 78%; top: 24%; width: 0; height: 0; }
 .orbit-phenomenon > span { position: absolute; display: none; }
