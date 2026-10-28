@@ -1,5 +1,6 @@
 // Dock du téléphone : quatre destinations libellées et l'export au centre, en action principale.
-import { Activity, Database, Download, LayoutDashboard, Users } from "lucide-react";
+// « Lecture » ouvre l'espace Données (lignes, performances, qualité, import).
+import { Activity, Download, Layers3, LayoutDashboard, Users } from "lucide-react";
 
 const DATA_PAGES = ["activations", "analysis", "quality", "import"];
 
@@ -15,7 +16,7 @@ export function OrbitDock({ page, onNavigate, onExport }: { page: string; onNavi
       {tab("activity", "Activité", Activity, page === "activity")}
       <button type="button" className="orbit-dock-tab orbit-dock-export" onClick={onExport}><span className="orbit-dock-fab"><Download size={21} strokeWidth={2} /></span><span>Export</span></button>
       {tab("agents", "Terrain", Users, page === "agents" || page === "shops")}
-      {tab("activations", "Données", Database, DATA_PAGES.includes(page))}
+      {tab("activations", "Lecture", Layers3, DATA_PAGES.includes(page))}
     </nav>
   );
 }

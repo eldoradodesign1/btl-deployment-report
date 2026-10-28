@@ -56,8 +56,10 @@ export function PeriodPicker({ data, startDate, endDate, recordLabel, onChange }
   const firstMonth = new Date(toDate(minDate).getFullYear(), toDate(minDate).getMonth(), 1);
   const lastMonth = new Date(toDate(maxDate).getFullYear(), toDate(maxDate).getMonth(), 1);
   const secondMonth = new Date(month.getFullYear(), month.getMonth() + 1, 1);
+  // Sur téléphone, la feuille ne montre qu’un mois : la navigation va jusqu’au dernier.
+  const narrow = typeof window !== "undefined" && window.matchMedia("(max-width: 760px)").matches;
   const canPrev = month > firstMonth;
-  const canNext = secondMonth < lastMonth;
+  const canNext = narrow ? month < lastMonth : secondMonth < lastMonth;
 
   const pickDay = (day: string) => {
     if (!pending) { setPending(day); onChange(day, day); return; }
@@ -87,6 +89,7 @@ export function PeriodPicker({ data, startDate, endDate, recordLabel, onChange }
         <CalendarDays size={16} /><span>{short(startDate)} → {short(endDate)}</span><ChevronDown size={15} className="orbit-period-chevron" />
       </button>
       {open && createPortal(<div ref={panelRef} className={`orbit-period-panel glass-card ${closing ? "is-closing" : ""}`} role="dialog" aria-label="Choisir la période">
+        <div className="orbit-period-sheet-head"><span className="orbit-period-handle" aria-hidden="true" /><h4>Période</h4><button type="button" className="orbit-link" onClick={() => onChange(minDate, maxDate)}>Réinitialiser</button></div>
         <div className="orbit-period-weeks">
           <span className="orbit-period-label">Semaines</span>
           <button type="button" className={startDate === minDate && endDate === maxDate ? "is-active" : ""} onClick={() => onChange(minDate, maxDate)}><b>Tout</b><span>Campagne complète</span><small>{data.length}</small></button>
@@ -95,7 +98,7 @@ export function PeriodPicker({ data, startDate, endDate, recordLabel, onChange }
         <div className="orbit-period-main">
           <div className="orbit-period-months">
             <button type="button" className="orbit-period-nav" disabled={!canPrev} aria-label="Mois précédent" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}><ChevronLeft size={16} /></button>
-            {renderMonth(month)}{secondMonth <= lastMonth && renderMonth(secondMonth)}
+            {renderMonth(month)}{!narrow && secondMonth <= lastMonth && renderMonth(secondMonth)}
             <button type="button" className="orbit-period-nav" disabled={!canNext} aria-label="Mois suivant" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))}><ChevronRight size={16} /></button>
           </div>
           <div className="dual-range compact-dual-range orbit-period-range" style={{ "--range-start": pct(startOffset), "--range-end": pct(endOffset) } as CSSProperties}>
