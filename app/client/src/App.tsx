@@ -4,7 +4,8 @@ import DesktopWindowControls from "@/components/DesktopWindowControls";
 import InstallAppGuide from "@/components/InstallAppGuide";
 import StartupSplash from "@/components/StartupSplash";
 import MerchantDataTools from "@/components/MerchantDataTools";
+import { OrbitOverlays } from "@/orbit/OrbitOverlays";
 
 export default function App() {
-  return <><DesktopWindowControls /><StartupSplash /><Home /><MerchantDataTools /><InstallAppGuide /></>;
+  return <><DesktopWindowControls /><StartupSplash /><Home /><MerchantDataTools /><InstallAppGuide /><OrbitOverlays /></>;
 }

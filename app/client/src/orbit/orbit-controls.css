@@ -1,0 +1,75 @@
+/* Orbit, contrôles maison : liste déroulante, champ de date, info-bulles, menu contextuel.
+   Aucun contrôle natif du navigateur n'est montré ; tout suit l'ambiance et la matière. */
+
+@keyframes orbit-panel-in { from { opacity: 0; transform: translateY(-4px) scale(.97); filter: blur(3px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes orbit-panel-out { to { opacity: 0; transform: translateY(-4px) scale(.97); filter: blur(3px); } }
+
+/* ── Liste déroulante ─────────────────────────────────────────────────── */
+.orbit-select { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; max-width: 280px; padding: 0 12px; border-radius: 12px; font: 600 13.5px var(--font-ui-safe); color: rgb(var(--o-ink)); background: rgb(var(--o-deep0) / .55); border: 1px solid rgb(var(--o-glass) / .16); transition: border-color .2s ease, box-shadow .2s ease; }
+.orbit-select > svg:first-child { color: rgb(var(--o-acc)); flex: none; }
+.orbit-select-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.orbit-select-chevron { margin-left: auto; flex: none; color: rgb(var(--o-mute)); transition: transform .3s cubic-bezier(.22, 1, .36, 1); }
+.orbit-select:hover { border-color: rgb(var(--o-acc) / .5); }
+.orbit-select.is-open, .orbit-select:focus-visible { outline: none; border-color: rgb(var(--o-acc)); box-shadow: 0 0 0 3px rgb(var(--o-acc) / .18); }
+.orbit-select.is-open .orbit-select-chevron { transform: rotate(180deg); }
+.orbit-select-panel, .orbit-date-panel { position: fixed; z-index: 3200; padding: 6px; border-radius: 16px; background: linear-gradient(160deg, rgb(var(--o-deep2) / .97), rgb(var(--o-deep1) / .99)); border: 1px solid rgb(var(--o-glass) / .16); box-shadow: inset 0 1px 0 rgb(var(--o-glass) / .08), 0 24px 60px rgb(var(--o-shade) / .45); backdrop-filter: blur(26px) saturate(150%); -webkit-backdrop-filter: blur(26px) saturate(150%); animation: orbit-panel-in .26s cubic-bezier(.22, 1, .36, 1) both; transform-origin: top center; }
+.orbit-select-panel.is-up { transform: translateY(-100%); animation: none; }
+.orbit-select-panel.is-closing { animation: orbit-panel-out .16s ease forwards; }
+.orbit-select-search { display: flex; align-items: center; gap: 8px; min-height: 38px; margin: 2px 2px 6px; padding: 0 10px; border-radius: 11px; color: rgb(var(--o-mute)); background: rgb(var(--o-deep0) / .6); border: 1px solid rgb(var(--o-glass) / .14); }
+.orbit-select-search:focus-within { border-color: rgb(var(--o-acc)); }
+.orbit-select-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font: 500 13.5px var(--font-ui-safe); color: rgb(var(--o-ink)); }
+.orbit-select-list { max-height: 300px; overflow: auto; display: grid; gap: 1px; outline: none; }
+.orbit-select-option { display: flex; align-items: center; gap: 10px; min-height: 38px; padding: 0 10px; border-radius: 10px; cursor: pointer; font: 500 13.5px var(--font-ui-safe); color: rgb(var(--o-ink2)); transition: background-color .15s ease, color .15s ease; }
+.orbit-select-option > span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.orbit-select-option small { margin-left: 8px; color: rgb(var(--o-mute)); }
+.orbit-select-option.is-active { background: rgb(var(--o-glass) / .07); color: rgb(var(--o-ink)); }
+.orbit-select-option[aria-selected="true"] { color: rgb(var(--o-ink)); font-weight: 700; }
+.orbit-select-option svg { color: rgb(var(--o-acc)); flex: none; }
+.orbit-select-empty { margin: 0; padding: 14px; text-align: center; font-size: 13px; color: rgb(var(--o-mute)); }
+
+/* ── Champ de date ────────────────────────────────────────────────────── */
+.orbit-date-field { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 42px; padding: 0 12px; border-radius: 12px; text-align: left; font: 600 13.5px var(--font-ui-safe); color: rgb(var(--o-ink)); background: rgb(var(--o-deep0) / .55); border: 1px solid rgb(var(--o-glass) / .16); transition: border-color .2s ease, box-shadow .2s ease; }
+.orbit-date-field svg { color: rgb(var(--o-acc)); }
+.orbit-date-field:hover { border-color: rgb(var(--o-acc) / .5); }
+.orbit-date-field[aria-expanded="true"], .orbit-date-field:focus-visible { outline: none; border-color: rgb(var(--o-acc)); box-shadow: 0 0 0 3px rgb(var(--o-acc) / .18); }
+.orbit-date-panel { padding: 12px; width: 246px; }
+.orbit-date-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.orbit-date-head strong { font: 700 13.5px var(--font-display-safe); color: rgb(var(--o-ink)); text-transform: capitalize; }
+.orbit-date-head button { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 10px; color: rgb(var(--o-ink2)); background: rgb(var(--o-glass) / .05); border: 1px solid rgb(var(--o-glass) / .12); }
+
+/* ── Info-bulle ───────────────────────────────────────────────────────── */
+.orbit-tip { position: fixed; z-index: 3300; max-width: 280px; padding: 7px 11px; border-radius: 10px; pointer-events: none; transform: translate(-50%, -100%); font: 600 12.5px/1.35 var(--font-ui-safe); color: rgb(var(--o-ink)); background: linear-gradient(160deg, rgb(var(--o-deep2) / .97), rgb(var(--o-deep1) / .99)); border: 1px solid rgb(var(--o-glass) / .16); box-shadow: 0 12px 30px rgb(var(--o-shade) / .4); animation: orbit-tip-in .22s cubic-bezier(.22, 1, .36, 1) both; }
+.orbit-tip.is-below { transform: translate(-50%, 0); }
+@keyframes orbit-tip-in { from { opacity: 0; filter: blur(2px); } to { opacity: 1; filter: none; } }
+
+/* ── Menu contextuel ──────────────────────────────────────────────────── */
+.orbit-context { position: fixed !important; z-index: 3300; width: 250px; padding: 6px; border-radius: 16px !important; display: grid; gap: 1px; background: linear-gradient(160deg, rgb(var(--o-deep2) / .97), rgb(var(--o-deep1) / .99)) !important; border: 1px solid rgb(var(--o-glass) / .16) !important; box-shadow: inset 0 1px 0 rgb(var(--o-glass) / .08), 0 24px 60px rgb(var(--o-shade) / .45) !important; backdrop-filter: blur(26px) saturate(150%); -webkit-backdrop-filter: blur(26px) saturate(150%); animation: orbit-panel-in .22s cubic-bezier(.22, 1, .36, 1) both; transform-origin: top left; }
+.orbit-context::before { display: none !important; }
+.orbit-context button { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 0 10px; border-radius: 10px; text-align: left; font: 600 13px var(--font-ui-safe); color: rgb(var(--o-ink)); background: transparent; border: 0; outline: none; transition: background-color .15s ease; }
+.orbit-context button svg { color: rgb(var(--o-mute)); flex: none; }
+.orbit-context button span { flex: 1; }
+.orbit-context button kbd { font: 600 11.5px var(--font-ui-safe); color: rgb(var(--o-mute)); background: none; border: 0; }
+.orbit-context button:hover:not(:disabled), .orbit-context button:focus-visible { background: rgb(var(--o-glass) / .07); }
+.orbit-context button:disabled { opacity: .4; }
+.orbit-context-sep { height: 1px; margin: 4px 6px; background: rgb(var(--o-glass) / .1); }
+
+/* ── Paramètres : sections en cartes arrondies, profil sans chevauchement ── */
+.app-shell .settings-panel { border-radius: 24px !important; padding: 14px !important; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.app-shell .settings-panel > * { min-width: 0; }
+.app-shell .settings-panel .settings-section { padding: 18px 20px !important; border: 1px solid rgb(var(--o-glass) / .08) !important; border-radius: 18px !important; background: rgb(var(--o-glass) / .03); }
+.app-shell .settings-panel .profile-settings-section { flex-direction: column !important; align-items: stretch !important; gap: 14px !important; background: linear-gradient(118deg, rgb(var(--o-acc) / .08), rgb(var(--o-lilac) / .035)) !important; }
+.app-shell .profile-settings-fields { display: grid !important; grid-template-columns: minmax(240px, 1.2fr) minmax(220px, 1fr) auto; gap: 12px !important; align-items: end !important; width: 100% !important; }
+.app-shell .profile-settings-fields > * { min-width: 0; margin: 0 !important; position: static !important; }
+.app-shell .profile-photo-dropzone { min-height: 64px; border-radius: 16px !important; }
+.app-shell .profile-photo-dropzone img { border-radius: 12px !important; }
+.app-shell .profile-settings-fields > label { display: grid !important; gap: 6px; font-size: 12.5px !important; font-weight: 600; letter-spacing: 0 !important; text-transform: none !important; color: rgb(var(--o-ink2)) !important; }
+.app-shell .profile-settings-fields > label input { width: 100%; min-height: 42px; padding: 0 12px; border-radius: 12px !important; font: 500 13.5px var(--font-ui-safe); color: rgb(var(--o-ink)); background: rgb(var(--o-deep0) / .55) !important; border: 1px solid rgb(var(--o-glass) / .16) !important; outline: none; }
+.app-shell .profile-settings-fields > label input:focus { border-color: rgb(var(--o-acc)) !important; box-shadow: 0 0 0 3px rgb(var(--o-acc) / .18); }
+.app-shell .profile-settings-fields .soft-button { min-height: 42px; padding: 0 16px; border-radius: 12px !important; white-space: nowrap; }
+@media (max-width: 900px) { .app-shell .profile-settings-fields { grid-template-columns: minmax(0, 1fr); } }
+
+/* ── Plus de blocs à coins carrés ─────────────────────────────────────── */
+/* En-tête collant : un fondu vers le ciel plutôt qu'un bandeau plein */
+@media (min-width: 761px) { .app-shell .topbar { background: linear-gradient(180deg, rgb(var(--o-deep0) / .78) 0%, rgb(var(--o-deep0) / .45) 70%, rgb(var(--o-deep0) / 0) 100%) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; } }
+.app-shell .progression-card { border-radius: 24px !important; }
+.app-shell .target-matrix-head, .app-shell .target-matrix-foot { border-radius: 12px !important; }

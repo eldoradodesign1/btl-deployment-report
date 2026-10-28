@@ -4,6 +4,12 @@ import "./index.css";
 import "./campaigns.css";
 import "./orbit/orbit.css";
 import "./orbit/orbit-screens.css";
+import "./orbit/orbit-chrome.css";
+import "./orbit/activite-terrain.css";
+import "./orbit/donnees.css";
+import "./orbit/export-v2.css";
+import "./orbit/mobile.css";
+import "./orbit/orbit-controls.css";
 import { applyAppearance } from "./orbit/appearance";
 
 applyAppearance();

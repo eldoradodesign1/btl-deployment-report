@@ -1,0 +1,71 @@
+/* Orbit, habillage : fenêtre d'export, menus et panneaux, état vide, dock et en-tête du téléphone.
+   La feuille du rapport (.report-paper) n'est pas touchée : elle est capturée telle quelle dans le PDF. */
+
+/* ── Fenêtre d'export ─────────────────────────────────────────────────── */
+.report-modal-backdrop { background: rgb(var(--o-deep0) / .62) !important; backdrop-filter: blur(10px) saturate(130%) !important; -webkit-backdrop-filter: blur(10px) saturate(130%) !important; animation: orbit-veil-in .35s ease both; }
+.report-modal { border-radius: 28px !important; border: 1px solid rgb(var(--o-glass) / .14) !important; background: linear-gradient(160deg, rgb(var(--o-deep2) / .97) 0%, rgb(var(--o-deep1) / .99) 100%) !important; box-shadow: inset 0 1px 0 rgb(var(--o-glass) / .08), 0 40px 100px rgb(var(--o-shade) / .45) !important; animation: orbit-fade-in .5s cubic-bezier(.22, 1, .36, 1) both; }
+.report-modal-header { border-bottom-color: rgb(var(--o-glass) / .1) !important; align-items: center !important; }
+.report-modal-header .eyebrow { display: none !important; }
+.report-modal-header h2 { margin: 0; font: 700 20px var(--font-display-safe) !important; letter-spacing: -.01em; color: rgb(var(--o-ink)) !important; }
+.report-modal-header p { margin: 2px 0 0; font-size: 13px !important; color: rgb(var(--o-mute)) !important; }
+.report-header-period.orbit-export-period { flex: none !important; width: auto !important; }
+.report-modal-footer { border-top-color: rgb(var(--o-glass) / .1) !important; }
+.report-modal-footer .primary-button, .report-modal-footer .secondary-button { display: inline-flex; align-items: center; gap: 8px; min-height: 42px; padding: 0 18px !important; border-radius: 12px !important; font: 700 13.5px var(--font-ui-safe) !important; transition: transform .15s ease, filter .2s ease, border-color .2s ease; }
+.report-modal-footer .primary-button { color: rgb(var(--o-onacc)) !important; background: linear-gradient(180deg, rgb(var(--o-acc)), rgb(var(--o-acc) / .8)) !important; border: 0 !important; box-shadow: inset 0 1px 0 rgb(255 255 255 / .35), 0 8px 22px rgb(var(--o-acc) / .3) !important; }
+.report-modal-footer .secondary-button { color: rgb(var(--o-ink)) !important; background: rgb(var(--o-glass) / .06) !important; border: 1px solid rgb(var(--o-glass) / .16) !important; box-shadow: none !important; }
+.report-modal-footer .primary-button:active, .report-modal-footer .secondary-button:active { transform: scale(.98); }
+@media (max-width: 760px) { .report-modal { border-radius: 0 !important; } }
+
+/* ── Menus et panneaux ────────────────────────────────────────────────── */
+.app-shell .logout-top { display: none !important; }
+.notification-panel .eyebrow, .help-panel .eyebrow { display: none !important; }
+.notification-panel h3, .help-panel h3 { font: 700 16px var(--font-display-safe) !important; color: rgb(var(--o-ink)) !important; }
+.account-menu, .notification-panel, .help-panel, .mobile-profile-menu { border-radius: 18px !important; }
+.account-menu-label { font-size: 12px !important; letter-spacing: .08em !important; }
+.orbit-menu-sep { height: 1px; margin: 6px 4px; background: rgb(var(--o-glass) / .1); }
+.orbit-menu-item { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 40px; padding: 0 12px; border-radius: 12px; text-align: left; font: 600 13.5px var(--font-ui-safe); color: rgb(var(--o-ink)); transition: background-color .2s ease; }
+.orbit-menu-item:hover { background: rgb(var(--o-glass) / .06); }
+.orbit-menu-item svg { color: rgb(var(--o-mute)); }
+.mobile-profile-menu { animation: orbit-pop-in .3s cubic-bezier(.22, 1, .36, 1) both; transform-origin: top right; }
+.install-guide-trigger { display: none !important; }
+
+/* ── État vide ────────────────────────────────────────────────────────── */
+.app-shell .orbit-empty-state { display: grid; justify-items: center; gap: 10px; margin: 8px 0 16px; padding: 38px 24px; border-radius: 24px; text-align: center; animation: orbit-fade-in .5s cubic-bezier(.22, 1, .36, 1) both; }
+.orbit-empty-icon { width: 54px; height: 54px; display: grid; place-items: center; border-radius: 18px; color: rgb(var(--o-acc)); background: rgb(var(--o-glass) / .05); border: 1px solid rgb(var(--o-glass) / .12); }
+.orbit-empty-state h3 { margin: 4px 0 0; font: 700 18px var(--font-display-safe); color: rgb(var(--o-ink)); }
+.orbit-empty-state p { margin: 0 0 6px; font-size: 13.5px; color: rgb(var(--o-mute)); }
+
+/* ── Téléphone : dock libellé, en-tête allégé ─────────────────────────── */
+.orbit-dock { display: none; }
+@media (max-width: 760px) {
+  .app-shell .sidebar, .app-shell .mobile-menu { display: none !important; }
+  .app-shell .main-stage { padding-bottom: 104px !important; }
+  .orbit-dock { position: fixed; z-index: 90; left: 10px; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom)); height: 66px; display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; border-radius: 24px; background: linear-gradient(160deg, rgb(var(--o-deep2) / .9), rgb(var(--o-deep1) / .96)); border: 1px solid rgb(var(--o-glass) / .14); box-shadow: inset 0 1px 0 rgb(var(--o-glass) / .08), 0 16px 34px rgb(var(--o-shade) / .4); backdrop-filter: blur(24px) saturate(150%); -webkit-backdrop-filter: blur(24px) saturate(150%); animation: orbit-fade-in .5s cubic-bezier(.22, 1, .36, 1) both; }
+  .orbit-dock-tab { display: grid; justify-items: center; gap: 3px; min-height: 56px; align-content: center; font: 600 12px var(--font-ui-safe); letter-spacing: -.01em; color: rgb(var(--o-mute)); transition: color .25s ease; }
+  .orbit-dock-tab.is-active { color: rgb(var(--o-acc)); }
+  .orbit-dock-tab:active { transform: scale(.96); }
+  .orbit-dock-fab { width: 52px; height: 52px; margin-top: -26px; display: grid; place-items: center; border-radius: 18px; color: rgb(var(--o-onacc)); background: linear-gradient(180deg, rgb(var(--o-acc)), rgb(var(--o-acc) / .8)); box-shadow: inset 0 1px 0 rgb(255 255 255 / .35), 0 10px 24px rgb(var(--o-acc) / .35); }
+  .app-shell .topbar { gap: 8px; padding-right: 50px; }
+  .app-shell .breadcrumb { font-size: 20px !important; }
+  /* L'ancienne marque de l'en-tête laisse la place au titre de l'écran */
+  .app-shell .topbar > .breadcrumb { flex: 1 1 auto !important; width: auto !important; min-width: 0 !important; height: auto !important; }
+  .app-shell .topbar > .breadcrumb::before, .app-shell .topbar > .breadcrumb::after { display: none !important; }
+  .app-shell .topbar > .breadcrumb strong { display: block !important; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .app-shell .topbar .topbar-tools { flex: none; gap: 6px; }
+  .app-shell .topbar .sync-state, .app-shell .topbar .export-top-button, .app-shell .topbar .help-wrap { display: none !important; }
+  .orbit-hero-facts { font-size: 13px; }
+}
+
+/* ── Sélecteur de campagne : une carte sous la marque, comme dans la maquette ── */
+.app-shell .sidebar .sidebar-context { display: block !important; margin: 0 2px 8px !important; padding: 0 !important; background: none !important; border: 0 !important; box-shadow: none !important; font: inherit !important; letter-spacing: 0 !important; }
+.app-shell .sidebar .sidebar-context > :not(.campaign-selector-wrap) { display: none !important; }
+.app-shell .sidebar .campaign-selector-trigger { min-height: 56px !important; gap: 10px !important; padding: 10px 12px !important; border-radius: 16px !important; text-align: left; background: rgb(var(--o-glass) / .05) !important; border: 1px solid rgb(var(--o-glass) / .12) !important; transition: border-color .25s ease, background-color .25s ease; }
+.app-shell .sidebar .campaign-selector-trigger:hover, .app-shell .sidebar .campaign-selector-trigger.is-open { border-color: rgb(var(--o-acc) / .45) !important; }
+.app-shell .sidebar .campaign-selector-trigger > span:not(.campaign-selector-dot) { display: grid; min-width: 0; flex: 1; }
+.app-shell .sidebar .campaign-selector-trigger b { font: 700 13.5px var(--font-ui-safe) !important; color: rgb(var(--o-ink)) !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-shell .sidebar .campaign-selector-trigger small { font: 500 12px var(--font-ui-safe) !important; letter-spacing: 0 !important; color: rgb(var(--o-mute)) !important; }
+.app-shell .sidebar .campaign-selector-trigger svg { color: rgb(var(--o-mute)); flex: none; transition: transform .3s cubic-bezier(.22, 1, .36, 1); }
+.app-shell .sidebar .campaign-selector-trigger.is-open svg { transform: rotate(180deg); }
+.app-shell .campaign-selector-dot { width: 9px !important; height: 9px !important; flex: none; background: rgb(var(--o-point)) !important; box-shadow: 0 0 10px rgb(var(--o-point)) !important; }
+.app-shell .sidebar .campaign-selector-menu { border-radius: 16px !important; animation: orbit-pop-in .3s cubic-bezier(.22, 1, .36, 1) both; transform-origin: top center; }
+.app-shell .sidebar .campaign-selector-menu.glass-card::before { background: linear-gradient(160deg, rgb(var(--o-deep2) / .94), rgb(var(--o-deep1) / .98)) !important; opacity: 1 !important; }

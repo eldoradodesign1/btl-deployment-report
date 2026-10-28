@@ -1,4 +1,4 @@
-import { ChevronDown, LogOut } from "lucide-react";
+import { ChevronDown, CircleHelp, Download, LogOut, Palette, Settings2 } from "lucide-react";
 import { type RefObject } from "react";
 import { type Role, type Session } from "@/lib/roles";
 
@@ -10,6 +10,9 @@ type Props = {
   onSwitchRole: (role: Role) => void;
   onOpenBtlPicker: () => void;
   onLogout: () => void;
+  onOpenAppearance?: () => void;
+  onOpenSettings?: () => void;
+  onOpenHelp?: () => void;
 };
 
 export default function MobileProfileControl({
@@ -20,6 +23,9 @@ export default function MobileProfileControl({
   onSwitchRole,
   onOpenBtlPicker,
   onLogout,
+  onOpenAppearance,
+  onOpenSettings,
+  onOpenHelp,
 }: Props) {
   return <div className="mobile-profile-control" ref={accountRef}>
     <button type="button" className={`mobile-profile-button icon-button ${accountOpen ? "is-open" : ""}`} aria-label="Changer de profil" aria-expanded={accountOpen} onClick={onToggle}>
@@ -38,6 +44,11 @@ export default function MobileProfileControl({
         <span className="mobile-profile-option-copy"><strong>Vodacom</strong><small>Lecture uniquement</small></span>
         {session.role === "vodacom" && <em>ACTIF</em>}
       </button>
+      <div className="orbit-menu-sep" />
+      {onOpenAppearance && <button type="button" className="orbit-menu-item" onClick={onOpenAppearance}><Palette size={15} /> Apparence</button>}
+      {onOpenSettings && <button type="button" className="orbit-menu-item" onClick={onOpenSettings}><Settings2 size={15} /> Paramètres</button>}
+      {onOpenHelp && <button type="button" className="orbit-menu-item" onClick={onOpenHelp}><CircleHelp size={15} /> Aide</button>}
+      <button type="button" className="orbit-menu-item" onClick={() => window.dispatchEvent(new Event("orbit:install"))}><Download size={15} /> Installer l’app</button>
       <button type="button" className="account-menu-logout" onClick={onLogout}><LogOut size={14} /> Déconnexion</button>
     </div>}
   </div>;
