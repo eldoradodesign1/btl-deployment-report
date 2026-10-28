@@ -13,7 +13,7 @@ export default function CampaignSelector({ campaigns: suppliedCampaigns, selecte
   const [host, setHost] = useState<HTMLElement | null>(null);
   const ref = useRef<HTMLDivElement>(null);
   const session = readSession();
-  const displayedCampaigns = suppliedCampaigns?.length ? suppliedCampaigns : campaigns;
+  const displayedCampaigns = (suppliedCampaigns?.length ? suppliedCampaigns : campaigns).filter((campaign) => (campaign.campaignType as string) !== "event");
   const selectedId = suppliedSelectedId ?? localStorage.getItem("btl-selected-campaign") ?? "";
   const selected = displayedCampaigns.find((campaign) => campaign.id === selectedId) ?? displayedCampaigns.find((campaign) => campaign.code === vodacomCampaignCode) ?? displayedCampaigns[0];
 

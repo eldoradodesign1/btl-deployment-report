@@ -61,7 +61,8 @@ export async function loadSupabaseSnapshot(client: SupabaseClient = supabase) {
 export async function loadCampaigns(client: SupabaseClient = supabase): Promise<Campaign[]> {
   const { data, error } = await client.from("campaigns").select("id,code,name,campaign_type,status,starts_on,ends_on,daily_pos_target,transactions_per_pos_target").order("created_at", { ascending: true });
   if (error) throw error;
-  return ((data ?? []) as CampaignRow[]).map((row) => ({ id: row.id, code: row.code, name: row.name, campaignType: row.campaign_type, status: row.status, startsOn: row.starts_on, endsOn: row.ends_on, dailyPosTarget: row.daily_pos_target, transactionsPerPosTarget: row.transactions_per_pos_target }));
+  // Les events (campaign_type = event) ne sont pas des campagnes de terrain : Rapports ne les affiche pas.
+  return ((data ?? []) as CampaignRow[]).filter((row) => (row.campaign_type as string) !== "event").map((row) => ({ id: row.id, code: row.code, name: row.name, campaignType: row.campaign_type, status: row.status, startsOn: row.starts_on, endsOn: row.ends_on, dailyPosTarget: row.daily_pos_target, transactionsPerPosTarget: row.transactions_per_pos_target }));
 }
 
 export async function loadCampaignSnapshot(campaign: Campaign | undefined, client: SupabaseClient = supabase) {

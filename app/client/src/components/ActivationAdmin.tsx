@@ -10,6 +10,7 @@ import { loadMerchantCreationContext, type MerchantCreationContext } from "@/lib
 import { ActivationJournal, type JournalRow } from "@/components/ActivationJournal";
 import { Drawer, PillSelect, RowMenu, Seg, SuggestField, Toggle } from "@/orbit/DataKit";
 import "./admin-activation.css";
+import { OrbitDateField } from "@/orbit/OrbitDateField";
 
 type Props = {
   filtered: Activation[];
@@ -134,7 +135,7 @@ function BtlMerchantTransactionAdminV4({ filtered, allData, rangeLabel, onMercha
 
   const drawer = draft ? <Drawer title={editing ? "Modifier la transaction" : "Ajouter une transaction"} onClose={close} busy={busy} footer={<><button type="button" className="orbit-ghost" onClick={close} disabled={busy}>Annuler</button><span className="dn-spacer" /><button type="button" className="orbit-primary dn-primary" disabled={busy || (creating && !proof)} onClick={() => void save()}>{editing ? <Pencil size={15} /> : <Upload size={15} />}{busy ? "Enregistrement…" : editing ? "Enregistrer" : "Téléverser & ajouter"}</button></>}>
     <p className="dn-caption">{editing ? `${editing.a} · ${editing.s}` : "La capture du transfert est requise avant l’enregistrement."}</p>
-    <label className="dn-lb">Date<div className="dn-field"><CalendarDays size={15} /><input type="date" value={draft.date} onChange={(event) => setField("date", event.target.value)} /></div></label>
+    <label className="dn-lb">Date<OrbitDateField value={draft.date} onChange={(value) => setField("date", value)} /></label>
     {creating && <div className="dn-lb">Ambassadeur<PillSelect label="Ambassadeur" icon={<UserRound size={14} />} value={draft.ambassador || "Choisir un ambassadeur"} options={ambassadors.map((item) => ({ id: item.label, label: item.label }))} onChange={(value) => setField("ambassador", value)} /></div>}
     {creating && <div className="dn-lb">Point de vente<PillSelect label="Point de vente" icon={<Store size={14} />} value={draft.point || "Choisir un point de vente"} options={points.map((item) => ({ id: item.label, label: item.label }))} onChange={(value) => setField("point", value)} /></div>}
     <label className="dn-lb">Référence<div className="dn-field"><input value={draft.reference} onChange={(event) => setField("reference", event.target.value)} /></div></label>
@@ -259,7 +260,7 @@ function BtlActivationAdmin({ filtered, allData, onCreate, onDelete, initialQuer
   const optIn = draft.t === "Opt-in Privilège";
 
   const drawer = formOpen ? <Drawer title="Ajouter une activation" onClose={closeForm} busy={busy} footer={<><button type="button" className="orbit-ghost" onClick={closeForm} disabled={busy}>Annuler</button><span className="dn-spacer" /><button type="button" className="orbit-primary dn-primary" onClick={() => void addActivation()} disabled={busy}>{busy ? "Ajout…" : "Ajouter"}</button></>}>
-    <label className="dn-lb">Date<div className="dn-field"><CalendarDays size={15} /><input type="date" value={draft.d} min={minDate} max={maxDate} onChange={(event) => updateDraft("d", event.target.value)} /></div></label>
+    <label className="dn-lb">Date<OrbitDateField value={draft.d} min={minDate} max={maxDate} onChange={(value) => updateDraft("d", value)} /></label>
     <div className="dn-lb">Agent<SuggestField label="Agent" icon={<UserRound size={15} />} value={draft.a} onChange={chooseAgent} options={agents} placeholder="Nom de l’agent" /></div>
     <div className="dn-lb">Shop<SuggestField label="Shop" icon={<Store size={15} />} value={draft.s} onChange={(value) => updateDraft("s", value)} options={shops} placeholder="Nom du shop" />{draft.s.trim() && <small className="dn-hint">Catégorie : {categoryFor(draft.s.trim(), source)}</small>}</div>
     <label className="dn-lb">Numéro du client<div className="dn-field"><Phone size={15} /><input value={draft.n} inputMode="numeric" placeholder="+243" onChange={(event) => updateDraft("n", event.target.value.replace(/\D/g, ""))} /></div></label>
