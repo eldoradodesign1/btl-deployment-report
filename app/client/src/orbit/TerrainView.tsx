@@ -29,7 +29,7 @@ function buildRows(source: Activation[], field: Field): Row[] {
     const counterpart = new Map<string, number>(); const byDate = new Map<string, number>();
     items.forEach((item) => { counterpart.set(item[other], (counterpart.get(item[other]) ?? 0) + 1); byDate.set(item.d, (byDate.get(item.d) ?? 0) + 1); });
     const main = Array.from(counterpart.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "fr"))[0]?.[0] ?? "—";
-    return { name, rank: 0, count: items.length, optIn: items.filter((item) => item.t === ACTIONS[0]).length, days: new Set(byDate.keys()), main, agents: counterpart.size, byDate };
+    return { name, rank: 0, count: items.length, optIn: items.filter((item) => item.t === ACTIONS[0] || item.t === "Contact avec transaction").length, days: new Set(byDate.keys()), main, agents: counterpart.size, byDate };
   }).sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "fr")).map((row, index) => ({ ...row, rank: index + 1 }));
 }
 
@@ -64,7 +64,7 @@ export function TerrainView({ page, filtered, rangeLabel, role, onSwitch, onOpen
   // "" = première ligne par défaut (ordinateur) ; null = fiche fermée.
   const current = selected === null ? null : rows.find((row) => row.name === selected) ?? shown[0] ?? null;
   const participant = field === "a" ? terms.participant : terms.location;
-  const columns: { key: SortKey; label: string; align?: "r"; className?: string }[] = [{ key: "name", label: participant }, { key: "main", label: field === "a" ? `${terms.location} principal` : `${terms.participants} actifs`, align: field === "a" ? undefined : "r", className: "tr-col-main" }, { key: "count", label: terms.records, align: "r" }, ...(!merchant ? [{ key: "optIn" as SortKey, label: "Opt-in", align: "r" as const, className: "tr-col-opt" }] : []), { key: "days", label: "Jours", align: "r", className: "tr-col-days" }, { key: "share", label: "Part", align: "r" }];
+  const columns: { key: SortKey; label: string; align?: "r"; className?: string }[] = [{ key: "name", label: participant }, { key: "main", label: field === "a" ? `${terms.location} principal` : `${terms.participants} actifs`, align: field === "a" ? undefined : "r", className: "tr-col-main" }, { key: "count", label: terms.records, align: "r" }, ...(!merchant ? [{ key: "optIn" as SortKey, label: document.documentElement.dataset.campaignType === "contact" ? "Transactions" : "Opt-in", align: "r" as const, className: "tr-col-opt" }] : []), { key: "days", label: "Jours", align: "r", className: "tr-col-days" }, { key: "share", label: "Part", align: "r" }];
   const toggleSort = (key: SortKey) => setSort((state) => state.key === key ? { key, asc: !state.asc } : { key, asc: key === "name" || key === "main" && field === "a" });
   // Sur téléphone, la fiche devient une feuille du bas rendue à la racine de l'appli (hors des parents animés).
   const place = (node: ReactNode) => phone ? createPortal(node, document.querySelector(".app-shell") ?? document.body) : node;
@@ -83,7 +83,7 @@ export function TerrainView({ page, filtered, rangeLabel, role, onSwitch, onOpen
         <div className="tr-row"><span className="tr-avatar">{initialsOf(current.name)}</span><div className="tr-who"><h3>{current.name}</h3><span className="tr-sub">{field === "a" ? current.main : `${current.agents} ${terms.participants.toLowerCase()} actifs`} · rang {current.rank}</span></div><button type="button" className="tr-close" aria-label="Fermer la fiche" onClick={() => setSelected(null)}><X size={16} /></button></div>
         <div className="tr-figure"><strong>{number(current.count)}</strong><span>{terms.records.toLowerCase()} · {percent(current.count, source.length)} % du total</span></div>
         <CumulativeCurve dates={periodDates} byDate={current.byDate} />
-        <div className="tr-facts">{!merchant && <span><b>{percent(current.optIn, current.count)} %</b> opt-in</span>}<span><b>{current.days.size}</b> jours</span><span><b>{decimal(current.count / Math.max(current.days.size, 1))}</b> par jour</span></div>
+        <div className="tr-facts">{!merchant && <span><b>{percent(current.optIn, current.count)} %</b> {document.documentElement.dataset.campaignType === "contact" ? "avec transaction" : "opt-in"}</span>}<span><b>{current.days.size}</b> jours</span><span><b>{decimal(current.count / Math.max(current.days.size, 1))}</b> par jour</span></div>
         <div className="tr-presence"><span className="tr-label">Présence</span><div className="tr-dots">{periodDates.map((date) => { const count = current.byDate.get(date); return <span key={date} className={count ? "" : "is-absent"} title={`${dayTitle(date)} · ${count ? `${count} ${terms.records.toLowerCase()}` : "absent"}`} />; })}</div><span className="tr-sub">{absences ? `${absences} absence${absences > 1 ? "s" : ""} sur ${periodDates.length} jours` : `Présent les ${periodDates.length} jours actifs`}</span></div>
         <div className="tr-actions"><button type="button" className="tr-ghost" onClick={() => onOpenActivations(current.name)}><Zap size={14} />Ses {terms.records.toLowerCase()}</button>{role === "vodacom" && <span className="tr-lock"><Lock size={12} />Renommer : BTL</span>}</div>
       </aside></>)}

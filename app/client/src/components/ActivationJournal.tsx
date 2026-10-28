@@ -46,8 +46,11 @@ export function ActivationJournal({ rows, merchant = false, initialQuery = "", c
   const pages = Math.max(1, Math.ceil(result.length / PAGE_SIZE));
   const current = Math.min(page, pages);
   const visible = result.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
-  const record = merchant ? "transaction" : "activation";
-  const place = merchant ? "Point de vente" : "Shop";
+  // Campagnes de contacts (Youth, Mikili) : un contact d'ambassadeur, dans un lieu, avec ou sans transaction.
+  const contact = typeof document !== "undefined" && document.documentElement.dataset.campaignType === "contact";
+  const ambassador = merchant || contact;
+  const record = merchant ? "transaction" : contact ? "contact" : "activation";
+  const place = merchant ? "Point de vente" : contact ? "Lieu" : "Shop";
 
   const remove = async (row: JournalRow) => {
     if (!onDelete) return;
@@ -55,10 +58,10 @@ export function ActivationJournal({ rows, merchant = false, initialQuery = "", c
     try { await onDelete(row); setConfirming(null); } finally { setBusy(false); }
   };
 
-  const drawer = aside ?? (detail && <Drawer title={merchant ? "Détail de la transaction" : "Détail de l’activation"} onClose={() => setDetail(null)}>
+  const drawer = aside ?? (detail && <Drawer title={merchant ? "Détail de la transaction" : contact ? "Détail du contact" : "Détail de l’activation"} onClose={() => setDetail(null)}>
     <dl className="dn-facts-list">
       <div><dt>Date</dt><dd>{longDate(detail.d)}</dd></div>
-      <div><dt>{merchant ? "Ambassadeur" : "Agent"}</dt><dd>{detail.a}</dd></div>
+      <div><dt>{ambassador ? "Ambassadeur" : "Agent"}</dt><dd>{detail.a}</dd></div>
       <div><dt>{place}</dt><dd>{detail.s}</dd></div>
       <div><dt>Catégorie</dt><dd>{detail.c || "—"}</dd></div>
       <div><dt>Type</dt><dd>{detail.t}</dd></div>
@@ -71,16 +74,16 @@ export function ActivationJournal({ rows, merchant = false, initialQuery = "", c
   return <div className={`dn-split ${drawer ? "has-drawer" : ""}`}>
     <section className="glass-card dn-card">
       <div className="dn-card-bar">
-        <label className="orbit-search dn-search"><Search size={16} /><input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder={merchant ? "Ambassadeur, point de vente, numéro…" : "Agent, shop, numéro…"} aria-label={`Rechercher une ${record}`} /></label>
+        <label className="orbit-search dn-search"><Search size={16} /><input value={query} onChange={(event) => { setQuery(event.target.value); setPage(1); }} placeholder={merchant ? "Ambassadeur, point de vente, numéro…" : contact ? "Ambassadeur, lieu, numéro…" : "Agent, shop, numéro…"} aria-label={`Rechercher une ${record}`} /></label>
         <PillSelect label="Ordre" icon={<ArrowDownUp size={14} />} value={order} options={[{ id: "recent", label: "Plus récentes" }, { id: "oldest", label: "Plus anciennes" }]} onChange={(value) => { setOrder(value as "recent" | "oldest"); setPage(1); }} />
-        <PillSelect label={place} icon={<Store size={14} />} value={shop} options={[{ id: "all", label: merchant ? "Tous les points de vente" : "Tous les shops" }, ...shops.map((name) => ({ id: name, label: name }))]} onChange={(value) => { setShop(value); setPage(1); }} />
+        <PillSelect label={place} icon={<Store size={14} />} value={shop} options={[{ id: "all", label: merchant ? "Tous les points de vente" : contact ? "Tous les lieux" : "Tous les shops" }, ...shops.map((name) => ({ id: name, label: name }))]} onChange={(value) => { setShop(value); setPage(1); }} />
         <span className="dn-spacer" />
         <span className="dn-tag">{number(result.length)} ligne{result.length > 1 ? "s" : ""}</span>
         {onCreate && <button type="button" className="orbit-primary dn-primary" onClick={onCreate}><Plus size={15} /> {createLabel ?? `Nouvelle ${record}`}</button>}
       </div>
       {note}
       {visible.length ? <div className="dn-table-wrap"><table className="orbit-table dn-table">
-        <thead><tr><th>Date</th><th>{merchant ? "Ambassadeur" : "Agent"}</th><th className="dn-hide-sm">{place}</th>{merchant ? <th className="r">Montant</th> : <th className="c">Opt-in</th>}<th className="dn-hide-sm">Client</th><th className="dn-col-menu"><span className="sr-only">Actions</span></th></tr></thead>
+        <thead><tr><th>Date</th><th>{ambassador ? "Ambassadeur" : "Agent"}</th><th className="dn-hide-sm">{place}</th>{merchant ? <th className="r">Montant</th> : contact ? <th>Type</th> : <th className="c">Opt-in</th>}<th className="dn-hide-sm">Client</th><th className="dn-col-menu"><span className="sr-only">Actions</span></th></tr></thead>
         <tbody>{visible.map((row) => {
           const { item, key } = row;
           if (confirming === key) return <tr key={key} className="dn-confirm"><td colSpan={6}><div className="dn-confirm-line"><Trash2 size={16} /><b>Supprimer l’{record} du {journalDate(item.d)} ({item.a}) ?</b><span className="dn-spacer" /><button type="button" className="orbit-ghost" disabled={busy} onClick={() => setConfirming(null)}>Annuler</button><button type="button" className="dn-danger" disabled={busy} onClick={() => void remove(row)}>{busy ? "Suppression…" : "Supprimer"}</button></div></td></tr>;
@@ -89,7 +92,7 @@ export function ActivationJournal({ rows, merchant = false, initialQuery = "", c
             <td>{journalDate(item.d)}</td>
             <td><strong>{item.a}</strong></td>
             <td className="dn-dim dn-hide-sm">{item.s}</td>
-            {merchant ? <td className="r num">{amount(item.merchant?.amount)}</td> : <td className="c"><span className={`dn-tag ${optIn ? "is-ok" : ""}`} title={item.t}>{optIn && <Check size={12} />}{optIn ? "Oui" : "Non"}</span></td>}
+            {merchant ? <td className="r num">{amount(item.merchant?.amount)}</td> : contact ? <td><span className={`dn-tag ${item.t === "Contact avec transaction" ? "is-ok" : ""}`}>{item.t === "Contact avec transaction" && <Check size={12} />}{item.t.replace(/^Contact /, "")}</span></td> : <td className="c"><span className={`dn-tag ${optIn ? "is-ok" : ""}`} title={item.t}>{optIn && <Check size={12} />}{optIn ? "Oui" : "Non"}</span></td>}
             <td className="dn-dim dn-phone dn-hide-sm">{maskNumber(item.n)}</td>
             <td className="r"><RowMenu label={`Actions pour la ligne du ${journalDate(item.d)} (${item.a})`} items={[{ label: "Voir le détail", icon: <Eye size={14} />, onSelect: () => setDetail(item) }, ...(onDelete ? [{ label: "Supprimer", icon: <Trash2 size={14} />, danger: true, onSelect: () => setConfirming(key) }] : [])]} /></td>
           </tr>;
