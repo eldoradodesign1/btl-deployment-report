@@ -1,0 +1,123 @@
+/* Orbit, écrans : période en panneau ancré, commentaire de période, espace Données, Terrain.
+   S'appuie sur les familles --o-* et les animations définies dans orbit.css. */
+
+/* ── Période ──────────────────────────────────────────────────────────── */
+@keyframes orbit-pop-out { to { opacity: 0; transform: translateY(-4px) scale(.97); filter: blur(3px); } }
+.orbit-period { position: relative; }
+
+.orbit-period-pill { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border-radius: 999px; font: 600 13.5px var(--font-ui-safe); color: rgb(var(--o-ink)); background: rgb(var(--o-glass) / .06); border: 1px solid rgb(var(--o-glass) / .16); white-space: nowrap; transition: border-color .25s ease, box-shadow .25s ease, background-color .25s ease; }
+.orbit-period-pill svg { color: rgb(var(--o-acc)); }
+.orbit-period-pill:hover, .orbit-period-pill.is-open { border-color: rgb(var(--o-acc) / .7); box-shadow: 0 0 0 3px rgb(var(--o-acc) / .16); }
+.orbit-period-chevron { transition: transform .3s cubic-bezier(.22, 1, .36, 1); color: rgb(var(--o-mute)) !important; }
+.orbit-period-pill.is-open .orbit-period-chevron { transform: rotate(180deg); }
+/* Le panneau est rendu à la racine de l'appli et placé par rapport à l'écran, sous l'en-tête (toujours en haut). */
+.app-shell .orbit-period-panel { position: fixed !important; right: 34px; top: 70px; z-index: 2300; width: min(740px, calc(100vw - 340px)); display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 18px; padding: 16px; border-radius: 24px; overflow: visible; animation: orbit-pop-in .32s cubic-bezier(.22, 1, .36, 1) both; transform-origin: top right; }
+.app-shell .orbit-period-panel.is-closing { animation: orbit-pop-out .18s ease forwards; }
+.orbit-period-label { display: block; margin: 0 0 6px 4px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgb(var(--o-mute)); }
+.orbit-period-weeks { display: grid; align-content: start; gap: 2px; max-height: 420px; overflow: auto; scrollbar-width: thin; }
+.orbit-period-weeks button { display: grid; grid-template-columns: 38px minmax(0, 1fr) auto; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 12px; text-align: left; font-size: 13px; color: rgb(var(--o-ink2)); border: 1px solid transparent; transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
+.orbit-period-weeks button:hover { background: rgb(var(--o-glass) / .05); }
+.orbit-period-weeks button.is-active { color: rgb(var(--o-ink)); background: rgb(var(--o-acc) / .13); border-color: rgb(var(--o-acc) / .36); }
+.orbit-period-weeks b { font: 700 13px var(--font-display-safe); color: rgb(var(--o-ink)); }
+.orbit-period-weeks small { font: 600 12px var(--font-display-safe); color: rgb(var(--o-mute)); font-variant-numeric: tabular-nums; }
+.orbit-period-main { display: grid; gap: 14px; align-content: start; min-width: 0; }
+.orbit-period-months { display: flex; align-items: flex-start; justify-content: center; gap: 16px; }
+.orbit-period-nav { width: 32px; height: 32px; margin-top: 24px; border-radius: 10px; display: grid; place-items: center; color: rgb(var(--o-ink2)); background: rgb(var(--o-glass) / .05); border: 1px solid rgb(var(--o-glass) / .12); transition: opacity .2s ease, border-color .2s ease; }
+.orbit-period-nav:disabled { opacity: .3; }
+.orbit-cal { display: grid; gap: 8px; }
+.orbit-cal strong { text-align: center; font: 700 13.5px var(--font-display-safe); color: rgb(var(--o-ink)); text-transform: capitalize; }
+.orbit-cal-grid { display: grid; grid-template-columns: repeat(7, 32px); gap: 3px 0; }
+.orbit-cal-head { height: 24px; display: grid; place-items: center; font-size: 12px; font-weight: 700; color: rgb(var(--o-mute)); }
+.orbit-cal-day { position: relative; height: 32px; display: grid; place-items: center; font-size: 13px; font-variant-numeric: tabular-nums; color: rgb(var(--o-ink2)); border-radius: 9px; transition: background-color .2s ease, color .2s ease; }
+.orbit-cal-day:hover:not(:disabled) { background: rgb(var(--o-glass) / .08); }
+.orbit-cal-day:disabled { color: rgb(var(--o-mute) / .45); cursor: default; }
+.orbit-cal-day.is-in { border-radius: 0; color: rgb(var(--o-ink)); background: rgb(var(--o-acc) / .14); }
+.orbit-cal-day.is-edge { border-radius: 9px; color: rgb(var(--o-onacc)); font-weight: 700; background: linear-gradient(180deg, rgb(var(--o-acc)), rgb(var(--o-acc) / .8)); box-shadow: 0 4px 14px rgb(var(--o-acc) / .3); }
+.orbit-cal-day.has-data::after { content: ""; position: absolute; bottom: 3px; width: 4px; height: 4px; border-radius: 50%; background: rgb(var(--o-point)); }
+.orbit-cal-day.is-edge.has-data::after { background: rgb(var(--o-onacc)); }
+.orbit-period-range { margin: 4px 6px 0 !important; width: auto !important; }
+.orbit-period-dates { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: rgb(var(--o-mute)); }
+.orbit-period-dates b { color: rgb(var(--o-ink)); font-weight: 600; }
+.orbit-period-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 4px; }
+.orbit-link { font-size: 13px; font-weight: 700; color: rgb(var(--o-acc)); }
+.orbit-primary { min-height: 40px; padding: 0 18px; border-radius: 12px; font: 700 13.5px var(--font-ui-safe); color: rgb(var(--o-onacc)); background: linear-gradient(180deg, rgb(var(--o-acc)), rgb(var(--o-acc) / .8)); box-shadow: inset 0 1px 0 rgb(255 255 255 / .35), 0 8px 22px rgb(var(--o-acc) / .3); transition: transform .15s ease, filter .2s ease; }
+.orbit-primary:hover { filter: brightness(1.06); }
+.orbit-primary:active { transform: scale(.98); }
+.orbit-ghost { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 0 12px; border-radius: 12px; font: 600 13px var(--font-ui-safe); color: rgb(var(--o-ink)); background: rgb(var(--o-glass) / .05); border: 1px solid rgb(var(--o-glass) / .16); white-space: nowrap; transition: border-color .2s ease, background-color .2s ease; }
+.orbit-ghost:hover { border-color: rgb(var(--o-acc) / .5); }
+.orbit-ghost svg { color: rgb(var(--o-acc)); }
+@media (max-width: 760px) {
+  .app-shell .orbit-period-panel { position: fixed !important; left: 0; right: 0; top: auto; bottom: 0; width: auto; max-height: 86vh; overflow: auto; grid-template-columns: minmax(0, 1fr); border-radius: 28px 28px 0 0 !important; padding: 18px 16px calc(18px + env(safe-area-inset-bottom)); z-index: 2400; transform-origin: bottom center; }
+  .orbit-period-weeks { grid-auto-flow: column; grid-auto-columns: max-content; overflow-x: auto; max-height: none; }
+  .orbit-period-weeks button { grid-template-columns: auto; gap: 1px; }
+  .orbit-period-weeks button small, .orbit-period-label { display: none; }
+  .orbit-period-months > .orbit-cal + .orbit-cal { display: none; }
+  .orbit-period-pill { min-height: 36px; padding: 0 12px; font-size: 13px; }
+}
+
+/* Panneaux flottants : toujours lisibles, quel que soit le réglage d'opacité des cartes. */
+.app-shell :is(.orbit-period-panel, .account-menu, .notification-panel, .help-panel, .mobile-control-menu).glass-card::before,
+.orbit-dialog.glass-card::before {
+  background: linear-gradient(165deg, rgb(var(--o-glass) / .07) 0%, transparent 42%), linear-gradient(160deg, rgb(var(--o-deep2) / .92) 0%, rgb(var(--o-deep1) / .97) 100%) !important;
+  opacity: 1 !important;
+}
+.app-shell :is(.orbit-period-panel, .account-menu, .notification-panel, .help-panel, .mobile-control-menu).glass-card,
+.orbit-dialog.glass-card {
+  backdrop-filter: blur(max(26px, calc(var(--ui-blur-n, 50) * .48px))) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(max(26px, calc(var(--ui-blur-n, 50) * .48px))) saturate(150%) !important;
+}
+
+/* ── Accueil : la progression et son commentaire côte à côte ─────────── */
+.orbit-dash-row { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr); gap: 12px; margin-bottom: 16px; align-items: stretch; }
+.orbit-dash-row > * { margin: 0 !important; min-width: 0; }
+@media (max-width: 1120px) { .orbit-dash-row { grid-template-columns: minmax(0, 1fr); } }
+.app-shell .orbit-comment-card { display: flex; flex-direction: column; gap: 10px; padding: 18px 20px; border-radius: 24px; }
+.orbit-comment-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.orbit-comment-head .eyebrow { margin-bottom: 4px; }
+.orbit-comment-head h3 { margin: 0; font: 700 16px var(--font-display-safe); color: rgb(var(--o-ink)); }
+.orbit-comment-card p { margin: 0; font-size: 13.5px; line-height: 1.6; color: rgb(var(--o-ink2)); max-height: 300px; overflow: auto; white-space: pre-line; }
+.orbit-comment-card .orbit-comment-empty { color: rgb(var(--o-mute)); }
+.orbit-comment-note { margin-top: auto; font-size: 12px; color: rgb(var(--o-mute)); }
+
+/* ── Espace Données et Terrain ────────────────────────────────────────── */
+.orbit-tabs, .orbit-seg { display: flex; flex-wrap: wrap; gap: 3px; padding: 4px; width: max-content; max-width: 100%; border-radius: 14px; background: rgb(var(--o-deep0) / .5); border: 1px solid rgb(var(--o-glass) / .1); }
+.orbit-tabs { margin: 4px 0 14px; animation: orbit-fade-in .45s cubic-bezier(.22, 1, .36, 1) both; }
+.orbit-tabs button, .orbit-seg button { display: inline-flex; align-items: center; gap: 7px; min-height: 36px; padding: 0 14px; border-radius: 11px; font: 600 13.5px var(--font-ui-safe); color: rgb(var(--o-ink2)); white-space: nowrap; transition: background-color .3s cubic-bezier(.22, 1, .36, 1), color .3s ease, box-shadow .3s ease; }
+.orbit-tabs button:hover, .orbit-seg button:hover { color: rgb(var(--o-ink)); background: rgb(var(--o-glass) / .05); }
+.orbit-tabs button.is-active, .orbit-seg button[aria-selected="true"] { color: rgb(var(--o-onacc)); background: linear-gradient(180deg, rgb(var(--o-acc)), rgb(var(--o-acc) / .8)); box-shadow: 0 3px 12px rgb(var(--o-acc) / .28); }
+.orbit-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 4px 0 14px; }
+.orbit-search { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 12px; border-radius: 12px; color: rgb(var(--o-mute)); background: rgb(var(--o-deep0) / .55); border: 1px solid rgb(var(--o-glass) / .16); transition: border-color .2s ease, box-shadow .2s ease; }
+.orbit-search:focus-within { border-color: rgb(var(--o-acc)); box-shadow: 0 0 0 3px rgb(var(--o-acc) / .2); }
+.orbit-search input { width: 240px; max-width: 52vw; border: 0; outline: 0; background: transparent; font: 500 14px var(--font-ui-safe); color: rgb(var(--o-ink)); }
+.orbit-search input::placeholder { color: rgb(var(--o-mute)); }
+.orbit-toolbar-note { margin-left: auto; font-size: 12.5px; color: rgb(var(--o-mute)); }
+.app-shell .orbit-table-card { padding: 8px 10px; border-radius: 24px; }
+.orbit-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13.5px; color: rgb(var(--o-ink2)); }
+.orbit-table th { padding: 10px 12px; text-align: left; font-size: 12px; font-weight: 700; color: rgb(var(--o-mute)); background: rgb(var(--o-glass) / .05); white-space: nowrap; }
+.orbit-table th:first-child { border-radius: 12px 0 0 12px; }
+.orbit-table th:last-child { border-radius: 0 12px 12px 0; }
+.orbit-table td { padding: 9px 12px; border-bottom: 1px solid rgb(var(--o-glass) / .08); vertical-align: middle; }
+.orbit-table tbody tr { transition: background-color .2s ease; }
+.orbit-table tbody tr:hover { background: rgb(var(--o-acc) / .06); }
+.orbit-table tbody tr:last-child td { border-bottom: 0; }
+.orbit-table strong { color: rgb(var(--o-ink)); font-weight: 600; }
+.orbit-table .r { text-align: right; }
+.orbit-table .c { text-align: center; width: 48px; }
+.orbit-table .num { font: 700 14px var(--font-display-safe); color: rgb(var(--o-ink)); font-variant-numeric: tabular-nums; }
+.orbit-rank { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 9px; font: 700 12px var(--font-display-safe); color: rgb(var(--o-ink2)); background: rgb(var(--o-glass) / .06); }
+.orbit-share { font: 700 13.5px var(--font-display-safe); color: rgb(var(--o-acc)); font-variant-numeric: tabular-nums; }
+.orbit-trend { width: 34%; }
+.orbit-trend .sparkline-wrap { min-width: 140px; }
+.orbit-empty { margin: 0; padding: 26px; text-align: center; font-size: 13.5px; color: rgb(var(--o-mute)); }
+@media (max-width: 760px) {
+  .orbit-trend, .orbit-toolbar-note { display: none; }
+  .orbit-search { flex: 1; }
+  .orbit-search input { width: 100%; }
+  .orbit-tabs { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+}
+
+/* En-têtes des écrans de données : le titre est déjà dans l'en-tête et les onglets ; il reste une ligne d'explication. */
+.app-shell .module-page > .module-heading.glass-card { padding: 0 2px 10px !important; background: none !important; border: 0 !important; box-shadow: none !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; min-height: 0 !important; }
+.app-shell .module-page > .module-heading.glass-card::before { display: none !important; }
+.app-shell .module-page > .module-heading h1, .app-shell .module-page > .module-heading .eyebrow { display: none !important; }
+.app-shell .module-page > .module-heading p { margin: 0 !important; font-size: 13px !important; color: rgb(var(--o-mute)) !important; }
