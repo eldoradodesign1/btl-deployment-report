@@ -1,5 +1,6 @@
 // Design philosophy: Halo Opaline app shell, with a crisp red-and-white report paper that prioritises unclipped, meeting-ready comparisons without changing operational data.
 import { useEffect, useId, useRef, useState } from "react";
+import { PeriodPicker } from "@/orbit/PeriodPicker";
 import { motion } from "framer-motion";
 import { Activity, BarChart3, CalendarClock, Download, FileSpreadsheet, FileText, Gauge, MapPin, Target, Users, X, Zap } from "lucide-react";
 import { jsPDF } from "jspdf";
@@ -236,7 +237,7 @@ export default function ReportExport({ data, filtered, fullDaily, targetDaily, f
 
   return <div className="report-modal-backdrop" role="dialog" aria-modal="true" aria-label="Aperçu du rapport" onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
     <div className="report-modal">
-      <header className="report-modal-header"><div className="report-header-copy"><div className="eyebrow">EXPORT · {role === "btl" ? "BTL" : "VODACOM"}</div><h2>Aperçu du rapport d’activité</h2><p>{rangeLabel} · {formatNumber(filtered.length)} lignes sélectionnées</p></div><div className="report-header-period"><DateRangeFilter compact data={data} startDate={startDate} endDate={endDate} onChange={onPeriodChange} /></div><button className="icon-button" onClick={onClose} aria-label="Fermer"><X size={18} /></button></header>
+      <header className="report-modal-header"><div className="report-header-copy"><h2>Exporter le rapport</h2><p>{formatNumber(filtered.length)} lignes · {rangeLabel}</p></div><div className="report-header-period orbit-export-period"><PeriodPicker data={data} startDate={startDate} endDate={endDate} recordLabel="lignes" onChange={onPeriodChange} /></div><button className="icon-button" onClick={onClose} aria-label="Fermer"><X size={18} /></button></header>
       <div className="report-paper" id="report-paper">
         <div className="report-paper-title"><h1>{reportTitle}</h1><p>Kinshasa — République Démocratique du Congo&nbsp;&nbsp;|&nbsp;&nbsp;Période {rangeLabel}&nbsp;&nbsp;|&nbsp;&nbsp;{report.days} jours d’activité</p></div>
         <section className="report-summary-grid">{reportKpis(report, merchant).map(({ label, value, decimals = 0, suffix = "", icon: Icon, progress }) => <div className={`report-kpi ${typeof progress === "number" ? "has-progress" : ""}`} key={label}><span className="report-kpi-icon" aria-hidden="true"><Icon size={132} strokeWidth={2.1} /></span><span>{label}</span>{typeof progress === "number" ? <span className="report-kpi-progress" aria-label={`${Math.round(progress)} % de l’objectif atteint`}><i style={{ width: `${progress}%` }} /><b><AnimatedNumber value={value} decimals={decimals} suffix={suffix} /></b></span> : <strong><AnimatedNumber value={value} decimals={decimals} suffix={suffix} /></strong>}</div>)}</section>
@@ -246,7 +247,7 @@ export default function ReportExport({ data, filtered, fullDaily, targetDaily, f
         </section>
         <section className="report-performance-grid"><div><div className="report-section-heading"><span>{participantPerformance}</span><strong>{participantDetail}</strong></div>{report.agents.slice(0, 6).map(([name, value]) => <div className="report-bar-row" key={name}><span>{name}</span><div><i style={{ width: `${(value / hostMax) * 100}%` }} /></div><b><AnimatedNumber value={value} /></b></div>)}</div><div><div className="report-section-heading"><span>{locationPerformance}</span><strong>{locationDetail}</strong></div>{report.shops.slice(0, 6).map(([name, value]) => <div className="report-bar-row shop-bar" key={name}><span>{name}</span><div><i style={{ width: `${(value / shopMax) * 100}%` }} /></div><b><AnimatedNumber value={value} /></b></div>)}</div></section>
       </div>
-      <footer className="report-modal-footer"><span>Le rapport suit la période active et les données locales chargées.</span><div><button className="secondary-button" onClick={exportXlsx}><FileSpreadsheet size={16} /> Exporter XLSX</button><button className="primary-button" onClick={exportPdf}><FileText size={16} /> Exporter PDF</button><button className="icon-button" onClick={() => window.print()} aria-label="Imprimer ou enregistrer en PDF"><Download size={17} /></button></div></footer>
+      <footer className="report-modal-footer"><span>Le rapport suit la période active et les données locales chargées.</span><div><button className="secondary-button" onClick={exportXlsx}><FileSpreadsheet size={16} /> Télécharger en Excel</button><button className="primary-button" onClick={exportPdf}><FileText size={16} /> Télécharger en PDF</button><button className="icon-button" onClick={() => window.print()} aria-label="Imprimer ou enregistrer en PDF"><Download size={17} /></button></div></footer>
     </div>
   </div>;
 }

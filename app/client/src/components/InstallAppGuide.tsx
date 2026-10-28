@@ -29,6 +29,12 @@ export default function InstallAppGuide() {
   const ios = typeof navigator !== "undefined" && isIOS();
 
   useEffect(() => {
+    const openFromMenu = () => setOpen(true);
+    window.addEventListener("orbit:install", openFromMenu);
+    return () => window.removeEventListener("orbit:install", openFromMenu);
+  }, []);
+
+  useEffect(() => {
     if (!isMobileBrowser() || isInstalled()) return;
     const onBeforeInstall = (event: Event) => {
       event.preventDefault();
