@@ -1,4 +1,7 @@
-export type CampaignType = "hostess" | "brand_ambassador";
+export type CampaignType = "hostess" | "brand_ambassador" | "contact";
+
+// Campagnes d'ambassadeurs mesurées en contacts : tous les contacts ne se soldent pas par une transaction.
+export const contactCampaignCodes = ["mpesa-mikili", "youth-f2f"];
 
 export type Campaign = {
   id: string;
@@ -24,7 +27,9 @@ export type CampaignTerms = {
 
 export const vodacomCampaignCode = "vodacom-privilege";
 
-export const campaignTerms = (type?: CampaignType): CampaignTerms => type === "brand_ambassador"
+export const campaignTerms = (type?: CampaignType): CampaignTerms => type === "contact"
+  ? { record: "contact", records: "Contacts", participant: "Ambassadeur", participants: "Ambassadeurs", location: "Lieu", locations: "Lieux", movement: "contacts" }
+  : type === "brand_ambassador"
   ? { record: "transaction", records: "Transactions", participant: "Ambassadeur", participants: "Ambassadeurs", location: "Point de vente", locations: "Points de vente", movement: "transactions" }
   : { record: "activation", records: "Activations", participant: "Agent", participants: "Agents", location: "Shop", locations: "Shops", movement: "activations" };
 

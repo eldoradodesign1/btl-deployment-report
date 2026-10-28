@@ -2,7 +2,7 @@ import type { Activation } from "@/data/vodacomData";
 import { supabase } from "@/lib/supabase";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Campaign } from "@/lib/campaigns";
-import { vodacomCampaignCode } from "@/lib/campaigns";
+import { contactCampaignCodes, vodacomCampaignCode } from "@/lib/campaigns";
 
 type LeadRow = {
   id: string | null;
@@ -62,10 +62,11 @@ export async function loadCampaigns(client: SupabaseClient = supabase): Promise<
   const { data, error } = await client.from("campaigns").select("id,code,name,campaign_type,status,starts_on,ends_on,daily_pos_target,transactions_per_pos_target").order("created_at", { ascending: true });
   if (error) throw error;
   // Les events (campaign_type = event) ne sont pas des campagnes de terrain : Rapports ne les affiche pas.
-  return ((data ?? []) as CampaignRow[]).filter((row) => (row.campaign_type as string) !== "event").map((row) => ({ id: row.id, code: row.code, name: row.name, campaignType: row.campaign_type, status: row.status, startsOn: row.starts_on, endsOn: row.ends_on, dailyPosTarget: row.daily_pos_target, transactionsPerPosTarget: row.transactions_per_pos_target }));
+  return ((data ?? []) as CampaignRow[]).filter((row) => (row.campaign_type as string) !== "event").map((row) => ({ id: row.id, code: row.code, name: row.name, campaignType: contactCampaignCodes.includes(row.code) ? "contact" : row.campaign_type, status: row.status, startsOn: row.starts_on, endsOn: row.ends_on, dailyPosTarget: row.daily_pos_target, transactionsPerPosTarget: row.transactions_per_pos_target }));
 }
 
 export async function loadCampaignSnapshot(campaign: Campaign | undefined, client: SupabaseClient = supabase) {
+  if (campaign?.campaignType === "contact") return loadContactSnapshot(campaign, client);
   if (campaign?.campaignType === "brand_ambassador") return loadMerchantSnapshot(campaign, client);
   const leadsResult = await client
     .from("leads")
@@ -255,4 +256,51 @@ async function loadMerchantSnapshot(campaign: Campaign, client: SupabaseClient) 
     merchantFieldActivity,
     merchantPosCoverage,
   };
+}
+
+// Campagnes « contact » (M-Pesa Mikili, Youth F2F) : chaque contact d'ambassadeur devient une ligne,
+// la présence vient des pointages du jour. Mikili : contacts clients et lieux ; Youth : rapports de contact par région.
+type ContactAttendanceRow = { ba_id: string | null; activity_date: string | null; checkin_at: string | null };
+// Le serveur renvoie au plus 1 000 lignes par requête : on lit par pages jusqu'à épuisement.
+async function readAll<T>(page: (from: number, to: number) => PromiseLike<{ data: unknown[] | null; error: unknown }>): Promise<T[]> {
+  const size = 1000; const rows: T[] = [];
+  for (let from = 0; ; from += size) {
+    const { data, error } = await page(from, from + size - 1);
+    if (error) throw error;
+    rows.push(...((data ?? []) as T[]));
+    if (!data || data.length < size) return rows;
+  }
+}
+async function loadContactSnapshot(campaign: Campaign, client: SupabaseClient) {
+  const mikili = campaign.code === "mpesa-mikili";
+  const contactsQuery = readAll<Record<string, unknown>>((from, to) => mikili
+    ? client.from("mpesa_mikili_clients").select("id,agent_id,activity_date,location_id,client_name,client_phone,transaction_done,transaction_type,presented_service").eq("campaign_id", campaign.id).order("activity_date", { ascending: true }).order("id", { ascending: true }).range(from, to)
+    : client.from("youth_contact_reports").select("id,ba_id,activity_date,region,subscriber_type,subscriber_phone,subscriber_name").eq("campaign_id", campaign.id).order("activity_date", { ascending: true }).order("id", { ascending: true }).range(from, to));
+  const attendanceQuery = readAll<ContactAttendanceRow>((from, to) => client.from(mikili ? "mpesa_mikili_daily_attendance" : "youth_daily_attendance").select("ba_id,activity_date,checkin_at").eq("campaign_id", campaign.id).order("id", { ascending: true }).range(from, to));
+  const locationsQuery = mikili ? client.from("campaign_locations").select("id,name").eq("campaign_id", campaign.id) : Promise.resolve({ data: [] as { id: string; name: string }[], error: null });
+  const [contacts, attendanceRows, locationsResult] = await Promise.all([contactsQuery, attendanceQuery, locationsQuery]);
+  if (locationsResult.error) throw locationsResult.error;
+  const ids = Array.from(new Set([...contacts.map((row) => String(row.agent_id ?? row.ba_id ?? "")), ...attendanceRows.map((row) => row.ba_id ?? "")].filter(Boolean)));
+  const usersResult = ids.length ? await client.from("users").select("id,full_name").in("id", ids) : { data: [] as { id: string; full_name: string | null }[], error: null };
+  if (usersResult.error) throw usersResult.error;
+  const names = Object.fromEntries((usersResult.data ?? []).filter((row) => row.id && row.full_name).map((row) => [row.id, row.full_name as string]));
+  const places = Object.fromEntries(((locationsResult.data ?? []) as { id: string; name: string }[]).map((row) => [row.id, row.name]));
+  const subscriber: Record<string, string> = { new_connection: "Nouvel abonné", existing_mpesa_no_app: "Abonné M-Pesa sans appli" };
+  const records: Activation[] = contacts.filter((row) => row.activity_date).map((row) => {
+    const agentId = String(row.agent_id ?? row.ba_id ?? "");
+    const done = row.transaction_done === true;
+    return {
+      id: String(row.id),
+      campaignId: campaign.id,
+      d: String(row.activity_date),
+      a: names[agentId] ?? "Ambassadeur",
+      s: mikili ? places[String(row.location_id ?? "")] ?? "Lieu non renseigné" : String(row.region ?? "Région non renseignée"),
+      c: "Contact",
+      t: mikili ? (done ? "Contact avec transaction" : "Contact sans transaction") : subscriber[String(row.subscriber_type ?? "")] ?? "Contact",
+      cl: String(row.client_name ?? row.subscriber_name ?? ""),
+      n: String(row.client_phone ?? row.subscriber_phone ?? ""),
+    };
+  });
+  const attendance = Array.from(new Set(attendanceRows.filter((row) => row.ba_id && row.activity_date && row.checkin_at).map((row) => `${names[row.ba_id!] ?? row.ba_id}|${row.activity_date}`))).map((value) => { const [agent, date] = value.split("|"); return { agent, date } satisfies AttendancePoint; });
+  return { records, dailyComments: {} as Record<string, string>, weeklyComments: {} as Record<string, string>, attendance, attendanceAvailable: attendanceRows.length > 0, merchantFieldActivity: [], merchantPosCoverage: null as MerchantPosCoverage | null };
 }

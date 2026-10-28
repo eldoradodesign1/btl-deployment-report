@@ -6,7 +6,7 @@ import { ChevronDown, ChevronUp, Lock, Search, Store, UserRound, X, Zap } from "
 import type { Activation } from "@/data/vodacomData";
 import { ACTIONS } from "@/lib/analytics";
 import type { Role } from "@/lib/roles";
-import { campaignTerms } from "@/lib/campaigns";
+import { campaignTerms, type CampaignType } from "@/lib/campaigns";
 import { dayTitle } from "@/orbit/dates";
 import { OrbitSelect } from "@/orbit/OrbitSelect";
 
@@ -44,7 +44,7 @@ function CumulativeCurve({ dates, byDate }: { dates: string[]; byDate: Map<strin
 
 export function TerrainView({ page, filtered, rangeLabel, role, onSwitch, onOpenActivations }: Props) {
   const merchant = typeof document !== "undefined" && document.documentElement.dataset.campaignType === "brand_ambassador";
-  const terms = campaignTerms(merchant ? "brand_ambassador" : undefined);
+  const terms = campaignTerms((typeof document !== "undefined" ? document.documentElement.dataset.campaignType : undefined) as CampaignType | undefined);
   const field: Field = page === "shops" ? "s" : "a";
   const [query, setQuery] = useState(""); const [scope, setScope] = useState("");
   const [sort, setSort] = useState<{ key: SortKey; asc: boolean }>({ key: "count", asc: false });
