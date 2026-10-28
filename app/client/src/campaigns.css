@@ -1,0 +1,14 @@
+/* Halo Opaline — variante Merchant : la grille quotidienne reflète les transactions, ambassadeurs et points de vente. */
+.merchant-daily-table .daily-table-head,
+.merchant-daily-table .daily-table-row {
+  min-width: 600px;
+  grid-template-columns: 1.6fr repeat(3, 0.9fr) 1.35fr;
+}
+
+@media (max-width: 760px) {
+  .merchant-daily-table .daily-table-head,
+  .merchant-daily-table .daily-table-row {
+    min-width: 540px;
+    gap: 8px;
+  }
+}

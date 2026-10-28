@@ -1,0 +1,5 @@
+# Tooltip refinement — local test
+
+The local preview was tested after the pre-tooltip snapshot was pushed to GitHub. The dashboard currently loads 591 rows from the Supabase `leads` read path, with the existing local fallback still available. Dates with imported supervisor comments appear as interactive daily targets in both the campaign progression and the daily activation histogram. The current viewport shows the progression and cadence charts without changing the surrounding dashboard composition.
+
+The requested second-stage behavior remains local only: hover shows a wide translucent excerpt, and clicking a dated point/bar opens the full comment in a modal. The first dated progression point and the first daily bar were both verified to open the modal, and the close control was verified. The backdrop handler was also exercised with a controlled event; the browser coordinate click was not used as evidence because the preview chrome can intercept coordinates. No tooltip refinement has been pushed to GitHub.
