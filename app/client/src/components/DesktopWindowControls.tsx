@@ -53,7 +53,7 @@ export default function DesktopWindowControls() {
   return (
     <div className="desktop-window-controls" aria-label="Contrôles de fenêtre">
       <div className="desktop-window-drag-region">
-        <img src={`${import.meta.env.BASE_URL}favicon.svg`} alt="" />
+        <img src={`${import.meta.env.BASE_URL}orbit-icon.svg`} alt="" />
       </div>
       <div className="desktop-window-actions">
         <button type="button" className="desktop-window-dot desktop-window-close" onClick={closeWindow} aria-label="Fermer l’application" data-window-tooltip="Fermer l’application"><X size={10} /></button>
