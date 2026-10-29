@@ -1,5 +1,6 @@
+import type { WewaReport } from "@/lib/wewaModel";
 import type { Activation } from "@/data/vodacomData";
-import { supabase } from "@/lib/supabase";
+import { supabase, wewaReportingToken } from "@/lib/supabase";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Campaign } from "@/lib/campaigns";
 import { contactCampaignCodes, vodacomCampaignCode } from "@/lib/campaigns";
@@ -62,10 +63,11 @@ export async function loadCampaigns(client: SupabaseClient = supabase): Promise<
   const { data, error } = await client.from("campaigns").select("id,code,name,campaign_type,status,starts_on,ends_on,daily_pos_target,transactions_per_pos_target").order("created_at", { ascending: true });
   if (error) throw error;
   // Les events (campaign_type = event) ne sont pas des campagnes de terrain : Rapports ne les affiche pas.
-  return ((data ?? []) as CampaignRow[]).filter((row) => (row.campaign_type as string) !== "event").map((row) => ({ id: row.id, code: row.code, name: row.name, campaignType: contactCampaignCodes.includes(row.code) ? "contact" : row.campaign_type, status: row.status, startsOn: row.starts_on, endsOn: row.ends_on, dailyPosTarget: row.daily_pos_target, transactionsPerPosTarget: row.transactions_per_pos_target }));
+  return ((data ?? []) as CampaignRow[]).filter((row) => (row.campaign_type as string) !== "event").map((row) => ({ id: row.id, code: row.code, name: row.name, campaignType: row.code === "activation-wewa" ? "wewa" : contactCampaignCodes.includes(row.code) ? "contact" : row.campaign_type, status: row.status, startsOn: row.starts_on, endsOn: row.ends_on, dailyPosTarget: row.daily_pos_target, transactionsPerPosTarget: row.transactions_per_pos_target }));
 }
 
 export async function loadCampaignSnapshot(campaign: Campaign | undefined, client: SupabaseClient = supabase) {
+  if (campaign?.code === "activation-wewa") return loadWewaSnapshot(campaign, client);
   if (campaign?.campaignType === "contact") return loadContactSnapshot(campaign, client);
   if (campaign?.campaignType === "brand_ambassador") return loadMerchantSnapshot(campaign, client);
   const leadsResult = await client
@@ -303,4 +305,13 @@ async function loadContactSnapshot(campaign: Campaign, client: SupabaseClient) {
   });
   const attendance = Array.from(new Set(attendanceRows.filter((row) => row.ba_id && row.activity_date && row.checkin_at).map((row) => `${names[row.ba_id!] ?? row.ba_id}|${row.activity_date}`))).map((value) => { const [agent, date] = value.split("|"); return { agent, date } satisfies AttendancePoint; });
   return { records, dailyComments: {} as Record<string, string>, weeklyComments: {} as Record<string, string>, attendance, attendanceAvailable: attendanceRows.length > 0, merchantFieldActivity: [], merchantPosCoverage: null as MerchantPosCoverage | null };
+}
+
+// Dedicated WEWA projection: no rider names, phone numbers, photos or GPS in the client report.
+async function loadWewaSnapshot(campaign: Campaign, client: SupabaseClient) {
+  const { data, error } = await client.rpc("wewa_report", { p_campaign_id: campaign.id, p_token: wewaReportingToken() });
+  if (error) throw error;
+  const report = data as WewaReport;
+  const records: Activation[] = report.records.map(row => ({ id: row.id, campaignId: campaign.id, d: row.activity_date, a: row.agent, s: row.station, c: row.district, t: "Motard enregistré", cl: "", n: "" }));
+  return { records, dailyComments: {} as Record<string, string>, weeklyComments: {} as Record<string, string>, attendance: report.attendance.map(row => ({ agent: row.agent, date: row.activity_date })), attendanceAvailable: true, merchantFieldActivity: [], merchantPosCoverage: null as MerchantPosCoverage | null, wewaReport: report };
 }

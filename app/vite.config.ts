@@ -22,6 +22,7 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
+    allowedHosts: ["terminal.local"],
     port: 3000,
     strictPort: false,
     host: true,

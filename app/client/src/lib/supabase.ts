@@ -90,6 +90,12 @@ export async function authenticateBtlProfile(profileId: string, password: string
     .eq("password_hash", password)
     .maybeSingle();
   if (error || !profile) throw new Error("Mot de passe incorrect pour ce profil.");
+  // A scoped WEWA token also permits BTL reporting when client visibility is disabled.
+  // Login to the existing applications remains available if WEWA is not deployed yet.
+  try {
+    const session = await supabase.rpc("wewa_open_session", { p_actor_id: profile.id, p_password: password });
+    if (!session.error && session.data?.token) sessionStorage.setItem("orbit-wewa-session", JSON.stringify({ actorId: profile.id, token: session.data.token, expiresAt: session.data.expires_at }));
+  } catch { /* Other campaign logins remain independent of WEWA. */ }
   return { id: profile.id, full_name: profile.full_name, role: profile.role, avatar_url: profile.avatar_url };
 }
 
@@ -142,4 +148,12 @@ export async function authenticateSupabaseSuperadmin(phone: string, password: st
     .maybeSingle();
   if (profileError || !profile) throw new Error("Connexion superadministrateur refusée.");
   return { id: profile.id, full_name: profile.full_name, role: profile.role === "superadmin" ? "superadmin" : "super_admin" };
+}
+
+export function wewaReportingToken(): string | null {
+  try {
+    const actor = JSON.parse(localStorage.getItem("vodacom-session") ?? "{}");
+    const session = JSON.parse(sessionStorage.getItem("orbit-wewa-session") ?? "{}");
+    return actor.role === "btl" && actor.profile?.id === session.actorId && Date.parse(session.expiresAt) > Date.now() ? session.token : null;
+  } catch { return null; }
 }
